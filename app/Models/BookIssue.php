@@ -38,9 +38,4 @@ class BookIssue extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-    public function book_issues()
-    {
-        return $this->hasMany(User::class);
-    }
 }

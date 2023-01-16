@@ -41,4 +41,29 @@ class Library extends Model
 
         return $library->id;
     }
+
+    public function book_issues()
+    {
+        return $this->hasMany(BookIssue::class);
+    }
+
+    public function books()
+    {
+        return $this->hasMany(Book::class);
+    }
+
+    public function categories()
+    {
+        return $this->hasMany(Category::class);
+    }
+
+    public function publishers()
+    {
+        return $this->hasMany(Publisher::class);
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

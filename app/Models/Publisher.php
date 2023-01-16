@@ -18,4 +18,14 @@ class Publisher extends Model
         'library_id',
         'name',
     ];
+
+    public function library()
+    {
+        return $this->belongsTo(Library::class);
+    }
+
+    public function books()
+    {
+        return $this->hasMany(Book::class);
+    }
 }
