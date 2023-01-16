@@ -1,0 +1,56 @@
+
+library (created/updated)
+-id
+-name
+-sub_domain
+-address
+-book_issue_duration
+-max_issue_extentions
+-details
+
+user (created/updated)
+-id
+-library_id
+-name
+-first_name
+-last_name
+-email
+-phone_number
+-password
+-role
+
+author (created/updated)
+-id
+-library_id
+-name
+
+publisher (created/updated)
+-id
+-library_id
+-name
+
+category (created/updated)
+-id
+-library_id
+-name
+
+book (created/updated)
+-id
+-library_id
+-category_id
+-author_id
+-publisher_id
+-published_year
+-isbn
+-edition
+
+book_issues (created)
+-id
+-library_id
+-user_id
+-issue_date
+-return_date
+-due_date
+-extention_num
+-status
+
