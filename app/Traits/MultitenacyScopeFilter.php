@@ -25,7 +25,7 @@ trait MultitenacyScopeFilter
             });
 
 
-            if (auth()->user()->role != "super_admin") {
+            if (auth()->user()->role != "admin") {
                 static::addGlobalScope(function (Builder $builder) {
                     return $builder->where('library_id', auth()->user()->tenant_id);
                 });

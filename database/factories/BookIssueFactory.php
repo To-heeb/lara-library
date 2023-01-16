@@ -30,6 +30,7 @@ class BookIssueFactory extends Factory
         return [
             //
             'user_id' => $user_id,
+            'book_id' => rand(1, 40),
             'library_id' => $library_c_id,
             'issue_date' => $now,
             'due_date' => Carbon::now()->addDays($addedDays)->timestamp,

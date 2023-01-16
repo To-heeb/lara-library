@@ -17,9 +17,12 @@ class CreateBooksTable extends Migration
             $table->id();
             $table->string('name');
             $table->integer('library_id');
+            $table->integer('author_id');
             $table->integer('category_id');
             $table->integer('publisher_id');
             $table->year('published_year');
+            $table->string('total_copies');
+            $table->string('available_copies');
             $table->string('isbn');
             $table->string('edition');
             $table->timestamps();

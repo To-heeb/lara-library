@@ -9,6 +9,20 @@ class Library extends Model
 {
     //
     use HasFactory;
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name',
+        'subdomain',
+        'email',
+        'address',
+        'phone_number',
+        'book_issue_duration_in_days',
+        'max_issue_extentions',
+    ];
 
     public static function getLibrary(): int
     {

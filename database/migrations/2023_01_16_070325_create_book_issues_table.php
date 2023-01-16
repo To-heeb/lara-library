@@ -16,6 +16,7 @@ class CreateBookIssuesTable extends Migration
         Schema::create('book_issues', function (Blueprint $table) {
             $table->id();
             $table->integer('library_id');
+            $table->integer('book_id');
             $table->integer('user_id');
             $table->timestamp('issue_date');
             $table->timestamp('return_date')->nullable();

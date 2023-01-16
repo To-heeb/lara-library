@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Traits\HttpResponses;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\User\LoginUser;
+use App\Http\Requests\User\StoreUser;
+use App\Http\Requests\User\AuthenticateUser;
 
 class UserController extends Controller
 {
@@ -74,58 +79,6 @@ class UserController extends Controller
         //
     }
 
-    // user_login 
-    public function user_login(Request $request)
-    {
-        $userInfo = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => 'required'
-        ]);
-
-        $userInfo['role'] = "user";
-        if (auth('api')->attempt($userInfo)) {
-            $request->session()->regenerateToken();
-        }
-
-        //return back()->withErrors(['email' => 'Invalid Credentials'])->onlyInput('email');
-    }
-
-    // librarian_login 
-    public function librarian_login(Request $request)
-    {
-        $librarianInfo = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => 'required'
-        ]);
-
-        $librarianInfo['role'] = "librarian";
-        if (auth('api')->attempt($librarianInfo)) {
-            $request->session()->regenerateToken();
-        }
-
-        //return back()->withErrors(['email' => 'Invalid Credentials'])->onlyInput('email');
-    }
-
-    // admin_login 
-    public function admin_login(Request $request)
-    {
-        $adminInfo = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => 'required'
-        ]);
-
-        $adminInfo['role'] = "admin";
-        if (auth('api')->attempt($adminInfo)) {
-            $request->session()->regenerateToken();
-        }
-
-        //return back()->withErrors(['email' => 'Invalid Credentials'])->onlyInput('email');
-    }
-
-
-    public function logout()
-    {
-    }
     /**
      * Remove the specified resource from storage.
      *

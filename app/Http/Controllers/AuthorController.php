@@ -15,6 +15,9 @@ class AuthorController extends Controller
     public function index()
     {
         //
+        return view('auther.index', [
+            'authors' => Author::Paginate(5)
+        ]);
     }
 
     /**

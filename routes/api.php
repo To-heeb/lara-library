@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\BookIssueController;
 use App\Http\Controllers\PublisherController;
 
 /*
@@ -31,21 +32,21 @@ Route::group(['prefix' => 'v1'], function () {
 
     // user
     Route::group(['prefix' => 'user'], function () {
-        Route::post('/login', [UserController::class, 'librarian_login']);
+        Route::post('/login', [AuthController::class, 'user_login']);
+        Route::post('/register', [AuthController::class, 'user_register']);
     });
 
     // librrian
     Route::group(['prefix' => 'librarian'], function () {
-        Route::post('/login', [UserController::class, 'librarian_login']);
+        Route::post('/login', [AuthController::class, 'librarian_login']);
+        Route::post('/register', [AuthController::class, 'librarian_register']);
     });
 
     // admin
     Route::group(['prefix' => 'admin'], function () {
-        Route::post('/login', [UserController::class, 'admin_login']);
+        Route::post('/login', [AuthController::class, 'admin_login']);
+        Route::post('/register', [AuthController::class, 'admin_register']);
     });
-
-
-    Route::post('/logout', [UserController::class, 'logout']);
 });
 
 
@@ -54,20 +55,48 @@ Route::group(['prefix' => 'v1', 'middleware' => 'auth:sanctum'], function () {
 
     // user
     Route::group(['prefix' => 'user'], function () {
-        Route::post('/login', [UserController::class, 'librarian_login']);
+        Route::get('/authors', [AuthorController::class, 'index']);
+        Route::get('/authors/{author}', [AuthorController::class, 'show']);
+        Route::get('/books', [BookController::class, 'index']);
+        Route::get('/books/{book}', [BookController::class, 'show']);
+        Route::get('/publishers', [PublisherController::class, 'index']);
+        Route::get('/publishers/{publisher}', [PublisherController::class, 'show']);
+        Route::get('/categories', [CategoryController::class, 'index']);
+        Route::get('/categories/{category}', [CategoryController::class, 'show']);
+        Route::get('/libraries', [LibraryController::class, 'index']);
+        Route::get('/libraries/{library}', [LibraryController::class, 'show']);
+        Route::get('/bookissues', [BookIssueController::class, 'index']);
+        Route::get('/bookissues/{bookissue}', [BookIssueController::class, 'show']);
     });
 
-    // librrian
+    // librarian
     Route::group(['prefix' => 'librarian'], function () {
         Route::resource('/authors', AuthorController::class);
         Route::resource('/books', BookController::class);
         Route::resource('/publishers', PublisherController::class);
         Route::resource('/categories', CategoryController::class);
-        Route::resource('/library', LibraryController::class);
+        Route::resource('/libraries', LibraryController::class);
+        Route::resource('/bookissues', BookIssueController::class);
     });
 
     // admin
     Route::group(['prefix' => 'admin'], function () {
-        Route::post('/login', [UserController::class, 'admin_login']);
+        Route::get('/authors', [AuthorController::class, 'index']);
+        Route::get('/authors/{author}', [AuthorController::class, 'show']);
+        Route::get('/books', [BookController::class, 'index']);
+        Route::get('/books/{book}', [BookController::class, 'show']);
+        Route::get('/publishers', [PublisherController::class, 'index']);
+        Route::get('/publishers/{publisher}', [PublisherController::class, 'show']);
+        Route::get('/categories', [CategoryController::class, 'index']);
+        Route::get('/categories/{category}', [CategoryController::class, 'show']);
+        Route::get('/libraries', [LibraryController::class, 'index']);
+        Route::get('/libraries/{library}', [LibraryController::class, 'show']);
+        Route::get('/bookissues', [BookIssueController::class, 'index']);
+        Route::get('/bookissues/{bookissue}', [BookIssueController::class, 'show']);
+        Route::get('/users', [UserController::class, 'index']);
+        Route::get('/users/{user}', [BookIssueController::class, 'show']);
     });
+
+
+    Route::post('/logout', [UserController::class, 'logout']);
 });
