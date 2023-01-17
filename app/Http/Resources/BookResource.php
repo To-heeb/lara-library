@@ -36,10 +36,10 @@ class BookResource extends JsonResource
                 'max_issue_extentions' => $this->max_issue_extentions,
                 'author_id' => (string) $this->author->id,
                 'author_name' => $this->author->name,
-                'publisher_id' => $this->publisher->author,
-                'publisher_name' => $this->publisher->category,
-                'category_id' => $this->category->publisher,
-                'category_name' => $this->category->total_copies,
+                'publisher_id' => $this->publisher->id,
+                'publisher_name' => $this->publisher->name,
+                'category_id' => $this->category->id,
+                'category_name' => $this->category->name,
             ]
         ];
     }

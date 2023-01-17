@@ -17,11 +17,13 @@ trait MultitenacyScopeFilter
         // use this when creating the queries
         $library_id = Library::getLibrary();
 
+
         if ($library_id != 0) {
 
-            if (auth()->check()) {
+            if (auth('sanctum')->check()) {
+                static::creating(function ($model) {
 
-                static::creating(function ($model, $library_id) {
+                    $library_id = Library::getLibrary();
 
                     if ($model instanceof User and $model->role == "admin") {
                         $model->library_id = 0;
@@ -31,40 +33,13 @@ trait MultitenacyScopeFilter
                 });
 
 
-                if (auth()->user()->role != "admin") {
+                if (auth('sanctum')->user()->role != "admin") {
+
                     static::addGlobalScope(function (Builder $builder) {
-                        return $builder->where('library_id', auth()->user()->library_id);
+                        return $builder->where('library_id', auth('sanctum')->user()->library_id);
                     });
                 }
             }
         }
-
-
-
-        // if (auth()->check()) {
-        //     // use this when creating the queries
-
-
-        //     $library_id = Library::getLibrary();
-
-        //     //return error page here
-        //     if ($library_id == 0) return ('welcome');
-
-        //     static::creating(function ($model, $library_id) {
-
-        //         if ($model instanceof User and $model->role == "admin") {
-        //             $model->library_id = 0;
-        //         } else {
-        //             $model->library_id = $library_id;
-        //         }
-        //     });
-
-
-        //     if (auth()->user()->role != "admin") {
-        //         static::addGlobalScope(function (Builder $builder) {
-        //             return $builder->where('library_id', auth()->user()->library_id);
-        //         });
-        //     }
-        // }
     }
 }

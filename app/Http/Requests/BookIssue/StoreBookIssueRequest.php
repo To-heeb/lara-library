@@ -25,6 +25,13 @@ class StoreBookIssueRequest extends FormRequest
     {
         return [
             //
+            'name' => 'required|string',
+            'user_id' => 'required|integer|exists:users,id',
+            'book_id' => 'required|integer|exists:books,id',
+            'issue_date' => ['required', 'date_format:Y-m-d'],
+            'return_date' =>  ['required', 'date_format:Y-m-d'],
+            'due_date' =>  ['required', 'date_format:Y-m-d'],
+            'extention_num' => ['required', 'integer'],
         ];
     }
 }

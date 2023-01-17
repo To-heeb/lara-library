@@ -56,6 +56,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('/users', [UserController::class, 'index']);
         Route::get('/users/{user}', [UserController::class, 'show']);
         Route::put('/users/{user}', [UserController::class, 'update']);
+        Route::post('/logout', [AuthController::class, 'logout']);
         //Route::delete('/users/{user}', [UserController::class, 'destroy']);
     });
 });
@@ -80,19 +81,13 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
 
             // user
             Route::group(['prefix' => 'user'], function () {
-                Route::get('/authors', [AuthorController::class, 'index']);
-                Route::get('/authors/{author}', [AuthorController::class, 'show']);
-                Route::get('/books', [BookController::class, 'index']);
-                Route::get('/books/{book}', [BookController::class, 'show']);
-                Route::get('/publishers', [PublisherController::class, 'index']);
-                Route::get('/publishers/{publisher}', [PublisherController::class, 'show']);
-                Route::get('/categories', [CategoryController::class, 'index']);
-                Route::get('/categories/{category}', [CategoryController::class, 'show']);
+                Route::resource('/authors', AuthorController::class)->only(['index', 'show']);
+                Route::resource('/books', BookController::class)->only(['index', 'show']);
+                Route::resource('/publishers', PublisherController::class)->only(['index', 'show']);
+                Route::resource('/categories', CategoryController::class)->only(['index', 'show']);
                 Route::get('/libraries/{library}', [LibraryController::class, 'show']);
-                Route::get('/bookissues', [BookIssueController::class, 'index']);
-                Route::get('/bookissues/{bookissue}', [BookIssueController::class, 'show']);
-                Route::get('/bookissues/{bookissue}', [BookIssueController::class, 'show']);
-                Route::get('/users/{user}', [UserController::class, 'show']);
+                Route::resource('/bookissues', BookIssueController::class)->only(['store', 'show', 'update']);
+                Route::resource('/users/{user}', [UserController::class, 'show'])->only(['show', 'update', 'destroy']);
                 Route::put('/users/{user}', [UserController::class, 'update']);
                 Route::delete('/users/{user}', [UserController::class, 'destroy']);
             });
@@ -112,7 +107,7 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
             });
 
             // logout
-            Route::post('/logout', [UserController::class, 'logout']);
+            Route::post('/logout', [AuthController::class, 'logout']);
         });
     });
 });

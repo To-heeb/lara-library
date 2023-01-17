@@ -25,15 +25,16 @@ class BookIssueFactory extends Factory
         $library_info = Library::find($library_c_id);
         $max_issue_extentions = $library_info->max_issue_extentions;
         $user_id = User::where('library_id', $library_c_id)->inRandomOrder()->first();
-        $now = time();
+        $issue_date = date('Y-m-d');
         $addedDays = intval($library_info->book_issue_duration_in_days);
-        $due_date = strtotime("+$addedDays days", $now);
+        $due_date =  date('Y-m-d', strtotime($issue_date . " +  $addedDays days"));
+
         return [
             //
             'user_id' => $user_id,
             'book_id' => rand(1, 40),
             'library_id' => $library_c_id,
-            'issue_date' => $now,
+            'issue_date' => $issue_date,
             'due_date' => $due_date,
             'extention_num' => rand(0, $max_issue_extentions),
         ];

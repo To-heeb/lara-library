@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Publisher;
 use Illuminate\Http\Request;
 use App\Http\Resources\PublisherResource;
+use App\Http\Requests\Publisher\StorePublisherRequest;
+use App\Http\Requests\Publisher\UpdatePublisherRequest;
+use App\Traits\HttpResponses;
 
 class PublisherController extends Controller
 {
+    use HttpResponses;
     /**
      * Display a listing of the resource.
      *
@@ -35,7 +39,7 @@ class PublisherController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePublisherRequest $request)
     {
         //
         $publisher_info = $request->validated($request->all());
@@ -51,9 +55,10 @@ class PublisherController extends Controller
      * @param  \App\Models\Publisher  $publisher
      * @return \Illuminate\Http\Response
      */
-    public function show(Publisher $publisher)
+    public function show($id, Publisher $publisher)
     {
         //
+        return new PublisherResource($publisher);
     }
 
     /**
@@ -74,9 +79,14 @@ class PublisherController extends Controller
      * @param  \App\Models\Publisher  $publisher
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Publisher $publisher)
+    public function update(UpdatePublisherRequest $request, $id, Publisher $publisher)
     {
         //
+        $request->validated($request->all());
+
+        $publisher->update($request->all());
+
+        return new PublisherResource($publisher);
     }
 
     /**
@@ -85,8 +95,13 @@ class PublisherController extends Controller
      * @param  \App\Models\Publisher  $publisher
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Publisher $publisher)
+    public function destroy($id, Publisher $publisher)
     {
         //
+        $publisher->delete();
+
+        return $this->success([
+            'message' => "Publisher successfully deleted"
+        ]);
     }
 }

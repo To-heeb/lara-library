@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\BookIssue;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\BookIssueResource;
+use App\Http\Requests\BookIssue\StoreBookIssueRequest;
+use App\Http\Requests\BookIssue\UpdateBookIssueRequest;
+use App\Traits\HttpResponses;
 
 class BookIssueController extends Controller
 {
+    use HttpResponses;
     /**
      * Display a listing of the resource.
      *
@@ -35,9 +40,14 @@ class BookIssueController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreBookIssueRequest $request)
     {
         //
+        $book_issue_info = $request->validated($request->all());
+
+        $book_issue = BookIssue::create($book_issue_info);
+
+        return new BookIssueResource($book_issue);
     }
 
     /**
@@ -46,9 +56,15 @@ class BookIssueController extends Controller
      * @param  \App\Models\BookIssue  $bookIssue
      * @return \Illuminate\Http\Response
      */
-    public function show(BookIssue $bookIssue)
+    public function show($id, BookIssue $bookIssue)
     {
         //
+        if (Auth::user()->role == "user") {
+            if (Auth::user()->id != $bookIssue->user_id) {
+                return $this->error('', "You are not authorized to make this request", 403);
+            }
+        }
+        return new BookIssueResource($bookIssue);
     }
 
     /**
@@ -69,9 +85,20 @@ class BookIssueController extends Controller
      * @param  \App\Models\BookIssue  $bookIssue
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, BookIssue $bookIssue)
+    public function update(UpdateBookIssueRequest $request, $id, BookIssue $bookIssue)
     {
         //
+        if (Auth::user()->role == "user") {
+            if (Auth::user()->id != $bookIssue->user_id) {
+                return $this->error('', "You are not authorized to make this request", 403);
+            }
+        }
+
+        $request->validated($request->all());
+
+        $bookIssue->update($request->all());
+
+        return new BookIssueResource($bookIssue);
     }
 
     /**
@@ -83,5 +110,9 @@ class BookIssueController extends Controller
     public function destroy(BookIssue $bookIssue)
     {
         //
+        $bookIssue->delete();
+
+        $message = "BookIssue successfully deleted";
+        return $this->success([], $message);
     }
 }

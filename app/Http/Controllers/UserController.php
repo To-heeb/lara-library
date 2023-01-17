@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
+use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\User\LoginUser;
 use App\Http\Requests\User\StoreUser;
@@ -22,6 +24,7 @@ class UserController extends Controller
     public function index()
     {
         //
+        return UserResource::collection(User::all());
     }
 
     /**
@@ -51,9 +54,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, User $user)
     {
         //
+        return $this->isNotAuthorized($user) ? $this->isNotAuthorized($user) : new UserResource($user);
     }
 
     /**
@@ -74,9 +78,21 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, User $user)
     {
         //
+        if (Auth::user()->role == "user") {
+            if (Auth::user()->id != $user->id) {
+                return $this->error('', "You are not authorized to make this request", 403);
+            }
+        }
+
+        $request->validated($request->all());
+
+        User::updateUser($request->all());
+        $user = User::find($user->id);
+
+        return new UserResource($user);
     }
 
     /**
@@ -85,8 +101,24 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
         //
+        if (Auth::user()->role == "admin" || Auth::user()->role == "librarian") {
+
+            $role = ucfirst(Auth::user()->role) . 's';
+
+            return $this->error(null, "$role are not allowed to delete account", 403);
+        }
+        return $this->isNotAuthorized($user) ? $this->isNotAuthorized($user) : $user->delete();
+    }
+
+    private function isNotAuthorized($user)
+    {
+        if (Auth::user()->role == "user") {
+            if (Auth::user()->id != $user->id) {
+                return $this->error('', "You are not authorized to make this request", 403);
+            }
+        }
     }
 }

@@ -27,7 +27,7 @@ class UserResource extends JsonResource
                 'updated_at' => $this->updated_at,
             ],
             'relationships' => [
-                'id' => (string) $this->library->id,
+                'library_id' => (string) $this->library->id,
                 'library_name' => $this->library->name,
                 'library_address' => $this->library->address,
                 'library_email' => $this->library->email,

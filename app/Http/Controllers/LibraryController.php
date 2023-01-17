@@ -7,6 +7,7 @@ use App\Models\Library;
 use Illuminate\Http\Request;
 use App\Http\Resources\LibraryResource;
 use App\Http\Requests\Library\StoreLibraryRequest;
+use App\Http\Requests\Library\UpdateLibraryRequest;
 
 class LibraryController extends Controller
 {
@@ -54,11 +55,15 @@ class LibraryController extends Controller
      * @param  \App\Models\Library  $library
      * @return \Illuminate\Http\Response
      */
-    public function show(Library $library)
+    public function show($id, Library $Library)
     {
         //
-        return new LibraryResource($library);
+
+        //$library = Library::find($id);
+
+        return new LibraryResource($Library);
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -78,9 +83,14 @@ class LibraryController extends Controller
      * @param  \App\Models\Library  $library
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Library $library)
+    public function update(UpdateLibraryRequest $request, Library $library)
     {
         //
+        $request->validated($request->all());
+
+        $library->update($request->all());
+
+        return new LibraryResource($library);
     }
 
     /**

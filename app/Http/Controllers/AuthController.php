@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\User\AuthenticateUser;
 use App\Http\Requests\User\LoginUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -146,5 +147,10 @@ class AuthController extends Controller
 
     public function logout()
     {
+        Auth::user()->currentAccessToken()->delete();
+
+        return $this->success([
+            'message' => "You have been logged out and no longer have access token"
+        ]);
     }
 }

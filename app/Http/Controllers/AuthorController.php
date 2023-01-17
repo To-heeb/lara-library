@@ -7,9 +7,12 @@ use Illuminate\Http\Request;
 use App\Http\Resources\AuthorResource;
 use App\Http\Requests\Author\StoreAuthor;
 use App\Http\Requests\Author\StoreAuthorRequest;
+use App\Http\Requests\Author\UpdateAuthorRequest;
+use App\Traits\HttpResponses;
 
 class AuthorController extends Controller
 {
+    use HttpResponses;
     /**
      * Display a listing of the resource.
      *
@@ -55,9 +58,10 @@ class AuthorController extends Controller
      * @param  \App\Models\Author  $author
      * @return \Illuminate\Http\Response
      */
-    public function show(Author $author)
+    public function show($id, Author $author)
     {
         //
+        return new AuthorResource($author);
     }
 
     /**
@@ -78,9 +82,14 @@ class AuthorController extends Controller
      * @param  \App\Models\Author  $author
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Author $author)
+    public function update(UpdateAuthorRequest $request, $id, Author $author)
     {
         //
+        $request->validated($request->all());
+
+        $author->update($request->all());
+
+        return new AuthorResource($author);
     }
 
     /**
@@ -89,8 +98,13 @@ class AuthorController extends Controller
      * @param  \App\Models\Author  $author
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Author $author)
+    public function destroy($id, Author $author)
     {
         //
+        $author->delete();
+
+        return $this->success([
+            'message' => "Author successfully deleted"
+        ]);
     }
 }

@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Resources\CategoryResource;
+use App\Http\Requests\Category\StoreCategoryRequest;
+use App\Http\Requests\Category\UpdateCategoryRequest;
+use App\Traits\HttpResponses;
 
 class CategoryController extends Controller
 {
+    use HttpResponses;
     /**
      * Display a listing of the resource.
      *
@@ -35,7 +39,7 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
         //
         $category_info = $request->validated($request->all());
@@ -51,7 +55,7 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show($id, Category $category)
     {
         //
         return new CategoryResource($category);
@@ -75,9 +79,14 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, $id, Category $category)
     {
         //
+        $request->validated($request->all());
+
+        $category->update($request->all());
+
+        return new CategoryResource($category);
     }
 
     /**
@@ -86,8 +95,13 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy($id, Category $category)
     {
         //
+        $category->delete();
+
+        return $this->success([
+            'message' => "Category successfully deleted"
+        ]);
     }
 }

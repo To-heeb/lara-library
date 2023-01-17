@@ -6,9 +6,12 @@ use App\Models\Book;
 use Illuminate\Http\Request;
 use App\Http\Resources\BookResource;
 use App\Http\Requests\Book\StoreBookRequest;
+use App\Http\Requests\Book\UpdateBookRequest;
+use App\Traits\HttpResponses;
 
 class BookController extends Controller
 {
+    use HttpResponses;
     /**
      * Display a listing of the resource.
      *
@@ -52,7 +55,7 @@ class BookController extends Controller
      * @param  \App\Models\Book  $book
      * @return \Illuminate\Http\Response
      */
-    public function show(Book $book)
+    public function show($id, Book $book)
     {
         //
         return new BookResource($book);
@@ -76,9 +79,14 @@ class BookController extends Controller
      * @param  \App\Models\Book  $book
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Book $book)
+    public function update(UpdateBookRequest $request, $id, Book $book)
     {
         //
+        $request->validated($request->all());
+
+        $book->update($request->all());
+
+        return new BookResource($book);
     }
 
     /**
@@ -87,8 +95,13 @@ class BookController extends Controller
      * @param  \App\Models\Book  $book
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Book $book)
+    public function destroy($id, Book $book)
     {
         //
+        $book->delete();
+
+        return $this->success([
+            'message' => "Book successfully deleted"
+        ]);
     }
 }

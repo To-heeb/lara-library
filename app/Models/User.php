@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Traits\MultitenacyScopeFilter;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -53,7 +54,6 @@ class User extends Authenticatable
         $librarian = User::find(Auth::id());
         $librarian->library_id  = $library_id;
 
-
         $librarian->save();
     }
 
@@ -62,6 +62,24 @@ class User extends Authenticatable
         $user = User::find(Auth::id());
         $user->library_id  = $library_id;
 
+        $user->save();
+    }
+
+    public static function updateUser($request)
+    {
+        $user = User::find(Auth::id());
+        $user->email  = $request->email;
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->name = $request->user_name;
+
+        if (isset($request->password)) {
+            $user->password = Hash::make($request->password);
+        }
+
+        if (isset($request->phone_number)) {
+            $user->phone_number = $request->phone_number;
+        }
 
         $user->save();
     }
