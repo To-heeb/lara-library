@@ -2,10 +2,9 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Library;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AuthorResource extends JsonResource
+class PublisherResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

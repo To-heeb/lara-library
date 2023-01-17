@@ -22,24 +22,13 @@ use App\Http\Controllers\PublisherController;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-
 
 Route::group(['prefix' => 'v1'], function () {
 
-    // user
-    Route::group(['prefix' => 'user'], function () {
-        Route::post('/login', [AuthController::class, 'user_login']);
-        Route::post('/register', [AuthController::class, 'user_register']);
-    });
-
-    // librrian
+    // librarian
     Route::group(['prefix' => 'librarian'], function () {
-        Route::post('/login', [AuthController::class, 'librarian_login']);
         Route::post('/register', [AuthController::class, 'librarian_register']);
+        Route::post('/libraries', [LibraryController::class, 'store']);
     });
 
     // admin
@@ -47,40 +36,11 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('/login', [AuthController::class, 'admin_login']);
         Route::post('/register', [AuthController::class, 'admin_register']);
     });
-});
 
 
+    Route::group(['prefix' => 'admin', 'middleware' => 'auth:sanctum'], function () {
 
-Route::group(['prefix' => 'v1', 'middleware' => 'auth:sanctum'], function () {
-
-    // user
-    Route::group(['prefix' => 'user'], function () {
-        Route::get('/authors', [AuthorController::class, 'index']);
-        Route::get('/authors/{author}', [AuthorController::class, 'show']);
-        Route::get('/books', [BookController::class, 'index']);
-        Route::get('/books/{book}', [BookController::class, 'show']);
-        Route::get('/publishers', [PublisherController::class, 'index']);
-        Route::get('/publishers/{publisher}', [PublisherController::class, 'show']);
-        Route::get('/categories', [CategoryController::class, 'index']);
-        Route::get('/categories/{category}', [CategoryController::class, 'show']);
-        Route::get('/libraries', [LibraryController::class, 'index']);
-        Route::get('/libraries/{library}', [LibraryController::class, 'show']);
-        Route::get('/bookissues', [BookIssueController::class, 'index']);
-        Route::get('/bookissues/{bookissue}', [BookIssueController::class, 'show']);
-    });
-
-    // librarian
-    Route::group(['prefix' => 'librarian'], function () {
-        Route::resource('/authors', AuthorController::class);
-        Route::resource('/books', BookController::class);
-        Route::resource('/publishers', PublisherController::class);
-        Route::resource('/categories', CategoryController::class);
-        Route::resource('/libraries', LibraryController::class);
-        Route::resource('/bookissues', BookIssueController::class);
-    });
-
-    // admin
-    Route::group(['prefix' => 'admin'], function () {
+        // admin
         Route::get('/authors', [AuthorController::class, 'index']);
         Route::get('/authors/{author}', [AuthorController::class, 'show']);
         Route::get('/books', [BookController::class, 'index']);
@@ -94,9 +54,65 @@ Route::group(['prefix' => 'v1', 'middleware' => 'auth:sanctum'], function () {
         Route::get('/bookissues', [BookIssueController::class, 'index']);
         Route::get('/bookissues/{bookissue}', [BookIssueController::class, 'show']);
         Route::get('/users', [UserController::class, 'index']);
-        Route::get('/users/{user}', [BookIssueController::class, 'show']);
+        Route::get('/users/{user}', [UserController::class, 'show']);
+        Route::put('/users/{user}', [UserController::class, 'update']);
+        //Route::delete('/users/{user}', [UserController::class, 'destroy']);
     });
+});
 
 
-    Route::post('/logout', [UserController::class, 'logout']);
+Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
+
+    Route::group(['prefix' => 'v1'], function () {
+
+        // librarian
+        Route::group(['prefix' => 'librarian'], function () {
+            Route::post('/login', [AuthController::class, 'librarian_login']);
+        });
+
+        // user
+        Route::group(['prefix' => 'user'], function () {
+            Route::post('/login', [AuthController::class, 'user_login']);
+            Route::post('/register', [AuthController::class, 'user_register']);
+        });
+
+        Route::group(['middleware' => 'auth:sanctum'], function () {
+
+            // user
+            Route::group(['prefix' => 'user'], function () {
+                Route::get('/authors', [AuthorController::class, 'index']);
+                Route::get('/authors/{author}', [AuthorController::class, 'show']);
+                Route::get('/books', [BookController::class, 'index']);
+                Route::get('/books/{book}', [BookController::class, 'show']);
+                Route::get('/publishers', [PublisherController::class, 'index']);
+                Route::get('/publishers/{publisher}', [PublisherController::class, 'show']);
+                Route::get('/categories', [CategoryController::class, 'index']);
+                Route::get('/categories/{category}', [CategoryController::class, 'show']);
+                Route::get('/libraries/{library}', [LibraryController::class, 'show']);
+                Route::get('/bookissues', [BookIssueController::class, 'index']);
+                Route::get('/bookissues/{bookissue}', [BookIssueController::class, 'show']);
+                Route::get('/bookissues/{bookissue}', [BookIssueController::class, 'show']);
+                Route::get('/users/{user}', [UserController::class, 'show']);
+                Route::put('/users/{user}', [UserController::class, 'update']);
+                Route::delete('/users/{user}', [UserController::class, 'destroy']);
+            });
+
+            // librarian
+            Route::group(['prefix' => 'librarian'], function () {
+                Route::resource('/authors', AuthorController::class);
+                Route::resource('/books', BookController::class);
+                Route::resource('/publishers', PublisherController::class);
+                Route::resource('/categories', CategoryController::class);
+                Route::resource('/libraries', LibraryController::class);
+                Route::resource('/bookissues', BookIssueController::class);
+                Route::get('/users', [UserController::class, 'index']);
+                Route::get('/users/{user}', [UserController::class, 'show']);
+                Route::put('/users/{user}', [UserController::class, 'update']);
+                //Route::delete('/users/{user}', [UserController::class, 'destroy']);
+            });
+
+            // logout
+            Route::post('/logout', [UserController::class, 'logout']);
+        });
+    });
 });

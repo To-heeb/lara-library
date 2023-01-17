@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\MultitenacyScopeFilter;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BookIssue extends Model
 {
-    use HasFactory;
+    use HasFactory, MultitenacyScopeFilter;
 
     /**
      * The attributes that are mass assignable.

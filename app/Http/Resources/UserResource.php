@@ -2,10 +2,9 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Library;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AuthorResource extends JsonResource
+class UserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,12 +17,17 @@ class AuthorResource extends JsonResource
         return [
             'id' => (string) $this->id,
             "attributes" => [
-                'name' => $this->name,
+                'user_name' => $this->name,
+                'first_name' => $this->first_name,
+                'last_name' => $this->last_name,
+                'role' => ucfirst($this->role),
+                'phone_number' => $this->phone_number,
+                'email' => $this->email,
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
             ],
             'relationships' => [
-                'library_id' => (string) $this->library->id,
+                'id' => (string) $this->library->id,
                 'library_name' => $this->library->name,
                 'library_address' => $this->library->address,
                 'library_email' => $this->library->email,

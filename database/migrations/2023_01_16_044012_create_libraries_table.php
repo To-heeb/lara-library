@@ -17,9 +17,9 @@ class CreateLibrariesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('subdomain');
-            $table->string('email')->nullable();
+            $table->string('email');
             $table->string('address');
-            $table->string('phone_number');
+            $table->string('phone_number')->nullable();
             $table->string('book_issue_duration_in_days');
             $table->string('max_issue_extentions');
             $table->timestamps();

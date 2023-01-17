@@ -28,13 +28,19 @@ class Library extends Model
     {
         $url = request()->getHttpHost();
 
-
         $url_array = explode('.', $url);
         $subdomain = $url_array[0];
 
         if ($subdomain === 'www') $subdomain = $url_array[1];
 
+        $app_short_url = explode('.', config('app.short_url'));
+
+        // echo $subdomain;
+        // echo config('app.short_url');
+        // exit;
+
         if (!$subdomain) return 0;
+        if ($subdomain  == $app_short_url[0] || $subdomain  == $app_short_url[1]) return 0;
 
         $library = Library::where('subdomain', 'LIKE', $subdomain)->first();
         //echo $subdomain;

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Category;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginUser extends FormRequest
+class StoreCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +25,6 @@ class LoginUser extends FormRequest
     {
         return [
             //
-            'email' => ['required', 'email', 'string'],
-            'password' => 'required|min:8|string'
         ];
     }
 }

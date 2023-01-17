@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Library;
+namespace App\Http\Requests\Author;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreLibrary extends FormRequest
+class StoreAuthorRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class StoreLibrary extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,6 +25,7 @@ class StoreLibrary extends FormRequest
     {
         return [
             //
+            'name' => 'required|string',
         ];
     }
 }

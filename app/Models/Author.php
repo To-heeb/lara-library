@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\MultitenacyScopeFilter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Author extends Model
 {
     //
-    use HasFactory;
+    use HasFactory, MultitenacyScopeFilter;
 
     /**
      * The attributes that are mass assignable.

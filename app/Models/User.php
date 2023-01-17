@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Auth;
+use App\Traits\MultitenacyScopeFilter;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens, MultitenacyScopeFilter;
 
     /**
      * The attributes that are mass assignable.
@@ -46,6 +48,23 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public static function updateLibraryIDForLibrarian($library_id)
+    {
+        $librarian = User::find(Auth::id());
+        $librarian->library_id  = $library_id;
+
+
+        $librarian->save();
+    }
+
+    public static function updateLibraryIDForUser($library_id)
+    {
+        $user = User::find(Auth::id());
+        $user->library_id  = $library_id;
+
+
+        $user->save();
+    }
 
     public function library()
     {

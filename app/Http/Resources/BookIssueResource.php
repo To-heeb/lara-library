@@ -2,10 +2,9 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Library;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AuthorResource extends JsonResource
+class BookIssueResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,7 +17,11 @@ class AuthorResource extends JsonResource
         return [
             'id' => (string) $this->id,
             "attributes" => [
-                'name' => $this->name,
+                'issue_date' => $this->issue_date,
+                'return_date' => $this->return_date,
+                'due_date' => $this->due_date,
+                'status' => $this->status,
+                'extention_num' => $this->extention_num,
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
             ],
@@ -30,6 +33,17 @@ class AuthorResource extends JsonResource
                 'library_phone_number' => $this->library->phone_number,
                 'book_issue_duration_in_days' => $this->book_issue_duration_in_days,
                 'max_issue_extentions' => $this->max_issue_extentions,
+                'book_id' => (string) $this->book->id,
+                'book_name' => $this->book->name,
+                'book_author' => $this->book->author,
+                'book_category' => $this->book->category,
+                'book_publisher' => $this->book->publisher,
+                'total_copies' => $this->book->total_copies,
+                'available_copies' => $this->book->available_copies,
+                'published_year' => $this->book->published_year,
+                'isbn' => $this->book->isbn,
+                'edition' => $this->book->edition,
+
             ]
 
         ];

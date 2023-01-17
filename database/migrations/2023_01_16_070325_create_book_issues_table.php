@@ -21,6 +21,7 @@ class CreateBookIssuesTable extends Migration
             $table->timestamp('issue_date');
             $table->timestamp('return_date')->nullable();
             $table->timestamp('due_date');
+            $table->enum('status', ['pending', 'returned'])->default("pending");
             $table->string('extention_num')->default('0');
             $table->timestamps();
         });

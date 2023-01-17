@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Library;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\User\LoginUser;
-use App\Http\Requests\User\StoreUser;
 use App\Http\Requests\User\AuthenticateUser;
+use App\Http\Requests\User\LoginUserRequest;
+use App\Http\Requests\User\StoreUserRequest;
 
 class AuthController extends Controller
 {
@@ -19,7 +20,7 @@ class AuthController extends Controller
     // LOGIN
 
     // user_login 
-    public function user_login(LoginUser $request)
+    public function user_login(LoginUserRequest $request)
     {
         $userInfo = $request->validated($request->all());
         $userInfo['role'] = "user";
@@ -33,6 +34,13 @@ class AuthController extends Controller
             'role' => $userInfo['role'],
         ])->first();
 
+        // update library id
+        if ($user->library_id == 0) {
+
+            $library_id = Library::getLibrary();
+            User::updateLibraryIDForUser($library_id);
+        }
+
         return $this->success([
             'user' => $user,
             'token' => $user->createToken('API Token of ' . $user->name)->plainTextToken,
@@ -40,7 +48,7 @@ class AuthController extends Controller
     }
 
     // librarian_login 
-    public function librarian_login(LoginUser $request)
+    public function librarian_login(LoginUserRequest $request)
     {
         $librarianInfo = $request->validated($request->all());
         $librarianInfo['role'] = "librarian";
@@ -54,6 +62,13 @@ class AuthController extends Controller
             'role' => $librarianInfo['role'],
         ])->first();
 
+        // update library id
+        if ($librarian->library_id == 0) {
+
+            $library_id = Library::getLibrary();
+            User::updateLibraryIDForLibrarian($library_id);
+        }
+
         return $this->success([
             'user' => $librarian,
             'token' => $librarian->createToken('API Token of ' . $librarian->name)->plainTextToken,
@@ -61,7 +76,7 @@ class AuthController extends Controller
     }
 
     // admin_login 
-    public function admin_login(LoginUser $request)
+    public function admin_login(LoginUserRequest $request)
     {
         $adminInfo = $request->validated($request->all());
         $adminInfo['role'] = "admin";
@@ -83,7 +98,7 @@ class AuthController extends Controller
 
     // REGISTRATION
     // user_regsiter 
-    public function user_register(StoreUser  $request)
+    public function user_register(StoreUserRequest  $request)
     {
         $userInfo = $request->validated($request->all());
         $userInfo['password'] =  Hash::make($userInfo['password']);
@@ -98,11 +113,11 @@ class AuthController extends Controller
         ]);
     }
 
-    public function librarian_register(StoreUser  $request)
+    public function librarian_register(StoreUserRequest  $request)
     {
-        $librarianInfo = $request->validate($request->all());
+        $librarianInfo = $request->validated($request->all());
         $librarianInfo['password'] =  Hash::make($librarianInfo['password']);
-        $librarianInfo['role'] = "user";
+        $librarianInfo['role'] = "librarian";
         $librarianInfo['name'] = $librarianInfo['user_name'];
 
         $librarian = User::create($librarianInfo);
@@ -113,11 +128,11 @@ class AuthController extends Controller
         ]);
     }
 
-    public function admin_register(StoreUser  $request)
+    public function admin_register(StoreUserRequest  $request)
     {
-        $adminInfo = $request->validate($request->all());
+        $adminInfo = $request->validated($request->all());
         $adminInfo['password'] =  Hash::make($adminInfo['password']);
-        $adminInfo['role'] = "user";
+        $adminInfo['role'] = "admin";
         $adminInfo['name'] = $adminInfo['user_name'];
 
         $admin = User::create($adminInfo);

@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Library;
 use Illuminate\Http\Request;
+use App\Http\Resources\LibraryResource;
+use App\Http\Requests\Library\StoreLibraryRequest;
 
 class LibraryController extends Controller
 {
@@ -15,6 +18,7 @@ class LibraryController extends Controller
     public function index()
     {
         //
+        return LibraryResource::collection(Library::all());
     }
 
     /**
@@ -33,9 +37,15 @@ class LibraryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreLibraryRequest $request)
     {
         //
+
+        $library_info = $request->validated($request->all());
+
+        $library = Library::create($library_info);
+
+        return new LibraryResource($library);
     }
 
     /**
@@ -47,6 +57,7 @@ class LibraryController extends Controller
     public function show(Library $library)
     {
         //
+        return new LibraryResource($library);
     }
 
     /**

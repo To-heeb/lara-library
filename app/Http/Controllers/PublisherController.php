@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Publisher;
 use Illuminate\Http\Request;
+use App\Http\Resources\PublisherResource;
 
 class PublisherController extends Controller
 {
@@ -15,6 +16,7 @@ class PublisherController extends Controller
     public function index()
     {
         //
+        return PublisherResource::collection(Publisher::all());
     }
 
     /**
@@ -36,6 +38,11 @@ class PublisherController extends Controller
     public function store(Request $request)
     {
         //
+        $publisher_info = $request->validated($request->all());
+
+        $publisher = Publisher::create($publisher_info);
+
+        return new PublisherResource($publisher);
     }
 
     /**

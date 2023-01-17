@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Library;
 
-use Illuminate\Validation\Rules\Password;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreUser extends FormRequest
+class StoreLibraryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,11 +25,12 @@ class StoreUser extends FormRequest
     {
         return [
             //
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'user_name' => 'required|unique:users,name',
-            'email' => 'email|required|unique:users,email',
-            'password' =>  ['required', 'confirmed', Password::defaults()],
+            'name' => 'required',
+            'subdomain' => 'required|string',
+            'address' => 'required|string',
+            'email' => 'email|required|unique:libraries,email',
+            'book_issue_duration_in_days' =>  ['required', 'integer'],
+            'max_issue_extentions' =>  ['required', 'integer'],
             'phone_number' => 'nullable'
         ];
     }

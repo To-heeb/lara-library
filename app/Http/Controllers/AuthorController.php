@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use Illuminate\Http\Request;
+use App\Http\Resources\AuthorResource;
+use App\Http\Requests\Author\StoreAuthor;
+use App\Http\Requests\Author\StoreAuthorRequest;
 
 class AuthorController extends Controller
 {
@@ -15,9 +18,7 @@ class AuthorController extends Controller
     public function index()
     {
         //
-        return view('auther.index', [
-            'authors' => Author::Paginate(5)
-        ]);
+        return AuthorResource::collection(Author::all());
     }
 
     /**
@@ -36,9 +37,16 @@ class AuthorController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreAuthorRequest $request)
     {
         //
+        $request->validated($request->all());
+
+        $author = Author::create([
+            'name' => $request->name
+        ]);
+
+        return new AuthorResource($author);
     }
 
     /**
