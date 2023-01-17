@@ -88,7 +88,6 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
                 Route::get('/libraries/{library}', [LibraryController::class, 'show']);
                 Route::resource('/bookissues', BookIssueController::class)->only(['store', 'show', 'update']);
                 Route::resource('/users/{user}', [UserController::class, 'show'])->only(['show', 'update', 'destroy']);
-                Route::put('/users/{user}', [UserController::class, 'update']);
                 Route::delete('/users/{user}', [UserController::class, 'destroy']);
             });
 
