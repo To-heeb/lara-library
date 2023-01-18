@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use PhpParser\Node\Expr\Cast\Object_;
 
 class Library extends Model
 {
@@ -46,6 +47,25 @@ class Library extends Model
         //echo $subdomain;
 
         return $library->id;
+    }
+
+    public static function getLibraryDetails(): ?Object
+    {
+        $url = request()->getHttpHost();
+
+        $url_array = explode('.', $url);
+        $subdomain = $url_array[0];
+
+        if ($subdomain === 'www') $subdomain = $url_array[1];
+
+        $app_short_url = explode('.', config('app.short_url'));
+
+        if (!$subdomain) return null;
+        if ($subdomain  == $app_short_url[0] || $subdomain  == $app_short_url[1]) return null;
+
+        $library = Library::where('subdomain', 'LIKE', $subdomain)->first();
+
+        return $library;
     }
 
     public function book_issues()

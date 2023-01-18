@@ -22,8 +22,8 @@ class LibraryResource extends JsonResource
                 'address' => $this->address,
                 'email' => $this->email,
                 'phone_number' => $this->phone_number,
-                'book_issue_duration_in_days' => $this->book_issue_duration_in_days,
-                'max_issue_extentions' => $this->max_issue_extentions,
+                'book_issue_duration_in_days' => $this->library->book_issue_duration_in_days,
+                'max_issue_extentions' => $this->library->max_issue_extentions,
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
             ]

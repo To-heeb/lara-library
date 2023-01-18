@@ -16,7 +16,7 @@ class CreateLibrariesTable extends Migration
         Schema::create('libraries', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('subdomain');
+            $table->string('subdomain')->unique();
             $table->string('email');
             $table->string('address');
             $table->string('phone_number')->nullable();

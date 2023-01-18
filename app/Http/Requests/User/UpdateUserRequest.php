@@ -28,9 +28,9 @@ class UpdateUserRequest extends FormRequest
             //
             'first_name' => 'required',
             'last_name' => 'required',
-            'user_name' => 'required|unique:users,name',
-            'email' => 'email|required|unique:users,email',
-            'password' =>  ['required', 'confirmed', Password::defaults()],
+            'user_name' => 'required',
+            'email' => 'email|required',
+            'password' =>  ['required', Password::defaults()],
             'phone_number' => 'nullable'
         ];
     }

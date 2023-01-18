@@ -36,6 +36,7 @@ class BookIssueFactory extends Factory
             'library_id' => $library_c_id,
             'issue_date' => $issue_date,
             'due_date' => $due_date,
+            'return_date' => $due_date,
             'extention_num' => rand(0, $max_issue_extentions),
         ];
     }

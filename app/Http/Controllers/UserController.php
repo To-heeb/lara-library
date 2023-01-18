@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\User\LoginUser;
 use App\Http\Requests\User\StoreUser;
 use App\Http\Requests\User\AuthenticateUser;
+use App\Http\Requests\User\UpdateUserRequest;
 
 class UserController extends Controller
 {
@@ -78,10 +79,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, $id, User $user)
     {
         //
-        if (Auth::user()->role == "user") {
+        if (Auth::user()->role == "librarian") {
             if (Auth::user()->id != $user->id) {
                 return $this->error('', "You are not authorized to make this request", 403);
             }
@@ -89,7 +90,7 @@ class UserController extends Controller
 
         $request->validated($request->all());
 
-        User::updateUser($request->all());
+        User::updateUser((object) $request->all());
         $user = User::find($user->id);
 
         return new UserResource($user);

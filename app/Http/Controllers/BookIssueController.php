@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Library;
 use App\Models\BookIssue;
 use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\BookIssueResource;
 use App\Http\Requests\BookIssue\StoreBookIssueRequest;
 use App\Http\Requests\BookIssue\UpdateBookIssueRequest;
-use App\Traits\HttpResponses;
 
 class BookIssueController extends Controller
 {
     use HttpResponses;
+
+
     /**
      * Display a listing of the resource.
      *
@@ -45,6 +48,15 @@ class BookIssueController extends Controller
         //
         $book_issue_info = $request->validated($request->all());
 
+        // issue date 
+        $book_issue_info['issue_date'] = date('Y-m-d');
+
+        // due date
+        $library_info = Library::getLibraryDetails();
+        $addedDays = intval($library_info->book_issue_duration_in_days);
+        $due_date =  date('Y-m-d', strtotime($book_issue_info['issue_date'] . " +  $addedDays days"));
+        $book_issue_info['due_date'] = $due_date;
+
         $book_issue = BookIssue::create($book_issue_info);
 
         return new BookIssueResource($book_issue);
@@ -53,18 +65,23 @@ class BookIssueController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\BookIssue  $bookIssue
+     * @param  \App\Models\BookIssue  $bookissue
      * @return \Illuminate\Http\Response
      */
-    public function show($id, BookIssue $bookIssue)
+    public function show(BookIssue $bookissue)
     {
         //
         if (Auth::user()->role == "user") {
-            if (Auth::user()->id != $bookIssue->user_id) {
+            if (Auth::user()->id != $bookissue->user_id) {
                 return $this->error('', "You are not authorized to make this request", 403);
             }
         }
-        return new BookIssueResource($bookIssue);
+
+        echo '<pre>';
+        var_dump($bookissue);
+        echo '</pre>';
+        exit;
+        return new BookIssueResource($bookissue);
     }
 
     /**
@@ -73,7 +90,7 @@ class BookIssueController extends Controller
      * @param  \App\Models\BookIssue  $bookIssue
      * @return \Illuminate\Http\Response
      */
-    public function edit(BookIssue $bookIssue)
+    public function edit(BookIssue $bookissue)
     {
         //
     }
@@ -85,20 +102,20 @@ class BookIssueController extends Controller
      * @param  \App\Models\BookIssue  $bookIssue
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateBookIssueRequest $request, $id, BookIssue $bookIssue)
+    public function update(UpdateBookIssueRequest $request, $id, BookIssue $bookissue)
     {
         //
         if (Auth::user()->role == "user") {
-            if (Auth::user()->id != $bookIssue->user_id) {
+            if (Auth::user()->id != $bookissue->user_id) {
                 return $this->error('', "You are not authorized to make this request", 403);
             }
         }
 
         $request->validated($request->all());
 
-        $bookIssue->update($request->all());
+        $bookissue->update($request->all());
 
-        return new BookIssueResource($bookIssue);
+        return new BookIssueResource($bookissue);
     }
 
     /**

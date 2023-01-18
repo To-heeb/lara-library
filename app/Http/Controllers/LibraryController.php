@@ -83,7 +83,7 @@ class LibraryController extends Controller
      * @param  \App\Models\Library  $library
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateLibraryRequest $request, Library $library)
+    public function update(UpdateLibraryRequest $request, $id, Library $library)
     {
         //
         $request->validated($request->all());

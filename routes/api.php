@@ -10,6 +10,7 @@ use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BookIssueController;
 use App\Http\Controllers\PublisherController;
+use App\Models\BookIssue;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,21 +42,13 @@ Route::group(['prefix' => 'v1'], function () {
     Route::group(['prefix' => 'admin', 'middleware' => 'auth:sanctum'], function () {
 
         // admin
-        Route::get('/authors', [AuthorController::class, 'index']);
-        Route::get('/authors/{author}', [AuthorController::class, 'show']);
-        Route::get('/books', [BookController::class, 'index']);
-        Route::get('/books/{book}', [BookController::class, 'show']);
-        Route::get('/publishers', [PublisherController::class, 'index']);
-        Route::get('/publishers/{publisher}', [PublisherController::class, 'show']);
-        Route::get('/categories', [CategoryController::class, 'index']);
-        Route::get('/categories/{category}', [CategoryController::class, 'show']);
-        Route::get('/libraries', [LibraryController::class, 'index']);
-        Route::get('/libraries/{library}', [LibraryController::class, 'show']);
-        Route::get('/bookissues', [BookIssueController::class, 'index']);
-        Route::get('/bookissues/{bookissue}', [BookIssueController::class, 'show']);
-        Route::get('/users', [UserController::class, 'index']);
-        Route::get('/users/{user}', [UserController::class, 'show']);
-        Route::put('/users/{user}', [UserController::class, 'update']);
+        Route::resource('/authors', AuthorController::class)->only(['index', 'show']);
+        Route::resource('/books', BookController::class)->only(['index', 'show']);
+        Route::resource('/publishers', PublisherController::class)->only(['index', 'show']);
+        Route::resource('/categories', CategoryController::class)->only(['index', 'show']);
+        Route::resource('/libraries', LibraryController::class)->only(['index', 'show']);
+        Route::resource('/bookissues', BookIssueController::class)->only(['index', 'show']);
+        Route::resource('/users', UserController::class)->only(['index', 'show', 'update']);
         Route::post('/logout', [AuthController::class, 'logout']);
         //Route::delete('/users/{user}', [UserController::class, 'destroy']);
     });
@@ -87,8 +80,7 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
                 Route::resource('/categories', CategoryController::class)->only(['index', 'show']);
                 Route::get('/libraries/{library}', [LibraryController::class, 'show']);
                 Route::resource('/bookissues', BookIssueController::class)->only(['store', 'show', 'update']);
-                Route::resource('/users/{user}', [UserController::class, 'show'])->only(['show', 'update', 'destroy']);
-                Route::delete('/users/{user}', [UserController::class, 'destroy']);
+                Route::resource('/users', UserController::class)->only(['show', 'update', 'destroy']);
             });
 
             // librarian
@@ -98,10 +90,11 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
                 Route::resource('/publishers', PublisherController::class);
                 Route::resource('/categories', CategoryController::class);
                 Route::resource('/libraries', LibraryController::class);
-                Route::resource('/bookissues', BookIssueController::class);
-                Route::get('/users', [UserController::class, 'index']);
-                Route::get('/users/{user}', [UserController::class, 'show']);
-                Route::put('/users/{user}', [UserController::class, 'update']);
+                //Route::resource('/bookissues', BookIssueController::class);
+                Route::get('/bookissues/{bookissue}', function ($bookissue) {
+                    return $bookissue;
+                });
+                Route::resource('/users', UserController::class)->only(['index', 'update', 'show']);
                 //Route::delete('/users/{user}', [UserController::class, 'destroy']);
             });
 

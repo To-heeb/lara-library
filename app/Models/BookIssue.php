@@ -25,6 +25,7 @@ class BookIssue extends Model
         'extention_num',
     ];
 
+
     public function library()
     {
         return $this->belongsTo(Library::class);

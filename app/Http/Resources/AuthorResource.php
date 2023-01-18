@@ -28,8 +28,8 @@ class AuthorResource extends JsonResource
                 'library_address' => $this->library->address,
                 'library_email' => $this->library->email,
                 'library_phone_number' => $this->library->phone_number,
-                'book_issue_duration_in_days' => $this->book_issue_duration_in_days,
-                'max_issue_extentions' => $this->max_issue_extentions,
+                'book_issue_duration_in_days' => $this->library->book_issue_duration_in_days,
+                'max_issue_extentions' => $this->library->max_issue_extentions,
             ]
 
         ];

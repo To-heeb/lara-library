@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\BookIssue;
 
+use App\Rules\ReturnDateRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBookIssueRequest extends FormRequest
@@ -24,14 +25,10 @@ class StoreBookIssueRequest extends FormRequest
     public function rules()
     {
         return [
-            //
-            'name' => 'required|string',
+
             'user_id' => 'required|integer|exists:users,id',
             'book_id' => 'required|integer|exists:books,id',
-            'issue_date' => ['required', 'date_format:Y-m-d'],
-            'return_date' =>  ['required', 'date_format:Y-m-d'],
-            'due_date' =>  ['required', 'date_format:Y-m-d'],
-            'extention_num' => ['required', 'integer'],
+            'return_date' =>  ['required', 'date_format:Y-m-d', new ReturnDateRule],
         ];
     }
 }

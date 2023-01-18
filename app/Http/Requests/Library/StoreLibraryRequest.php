@@ -26,7 +26,7 @@ class StoreLibraryRequest extends FormRequest
         return [
             //
             'name' => 'required',
-            'subdomain' => 'required|string',
+            'subdomain' => 'required|string|unique:libraries,subdomain',
             'address' => 'required|string',
             'email' => 'email|required|unique:libraries,email',
             'book_issue_duration_in_days' =>  ['required', 'integer'],
