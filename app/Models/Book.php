@@ -29,7 +29,28 @@ class Book extends Model
         'edition',
     ];
 
+    /**
+     * Update the books available after an issue havae been created.
+     * 
+     * @param integer $book_id
+     * @param string $status
+     * @return void
+     */
+    public static function updateBookCopies($book_id, $status)
+    {
+        $book = Book::find($book_id);
 
+        if ($status == 'decrease') {
+
+            $book->available_copies = $book->available_copies - 1;
+        } elseif ($status == 'increase') {
+
+            $book->available_copies = $book->available_copies + 1;
+        }
+
+
+        $book->save();
+    }
 
     public function library()
     {

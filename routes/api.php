@@ -90,10 +90,9 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
                 Route::resource('/publishers', PublisherController::class);
                 Route::resource('/categories', CategoryController::class);
                 Route::resource('/libraries', LibraryController::class);
-                //Route::resource('/bookissues', BookIssueController::class);
-                Route::get('/bookissues/{bookissue}', function ($bookissue) {
-                    return $bookissue;
-                });
+                Route::resource('/bookissues', BookIssueController::class);
+                Route::put('/bookissues/{bookissue}/extend', [BookIssueController::class, 'extendBook']);
+                Route::put('/bookissues/{bookissue}/return', [BookIssueController::class, 'returnBook']);
                 Route::resource('/users', UserController::class)->only(['index', 'update', 'show']);
                 //Route::delete('/users/{user}', [UserController::class, 'destroy']);
             });

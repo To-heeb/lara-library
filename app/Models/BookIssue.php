@@ -19,6 +19,7 @@ class BookIssue extends Model
         'library_id',
         'user_id',
         'book_id',
+        'status',
         'issue_date',
         'return_date',
         'due_date',
