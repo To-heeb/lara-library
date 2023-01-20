@@ -10,7 +10,6 @@ use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BookIssueController;
 use App\Http\Controllers\PublisherController;
-use App\Models\BookIssue;
 
 /*
 |--------------------------------------------------------------------------
