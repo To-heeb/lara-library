@@ -38,7 +38,7 @@ Route::group(['prefix' => 'v1'], function () {
     });
 
 
-    Route::group(['prefix' => 'admin', 'middleware' => 'auth:sanctum'], function () {
+    Route::group(['prefix' => 'admin', 'middleware' =>  ['auth:sanctum', 'role:admin']], function () {
 
         // admin
         Route::resource('/authors', AuthorController::class)->only(['index', 'show']);
@@ -72,18 +72,27 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
         Route::group(['middleware' => 'auth:sanctum'], function () {
 
             // user
-            Route::group(['prefix' => 'user'], function () {
-                Route::resource('/authors', AuthorController::class)->only(['index', 'show']);
-                Route::resource('/books', BookController::class)->only(['index', 'show']);
-                Route::resource('/publishers', PublisherController::class)->only(['index', 'show']);
-                Route::resource('/categories', CategoryController::class)->only(['index', 'show']);
-                Route::get('/libraries/{library}', [LibraryController::class, 'show']);
-                Route::resource('/bookissues', BookIssueController::class)->only(['store', 'show', 'update']);
-                Route::resource('/users', UserController::class)->only(['show', 'update', 'destroy']);
-            });
+            Route::group(
+                [
+                    'prefix' => 'user',
+                    'middleware' => 'role:user'
+                ],
+                function () {
+                    Route::resource('/authors', AuthorController::class)->only(['index', 'show']);
+                    Route::resource('/books', BookController::class)->only(['index', 'show']);
+                    Route::resource('/publishers', PublisherController::class)->only(['index', 'show']);
+                    Route::resource('/categories', CategoryController::class)->only(['index', 'show']);
+                    Route::get('/libraries/{library}', [LibraryController::class, 'show']);
+                    Route::resource('/bookissues', BookIssueController::class)->only(['store', 'show', 'update']);
+                    Route::resource('/users', UserController::class)->only(['show', 'update', 'destroy']);
+                }
+            );
 
             // librarian
-            Route::group(['prefix' => 'librarian'], function () {
+            Route::group([
+                'prefix' => 'librarian',
+                'middleware' => 'role:librarian'
+            ], function () {
                 Route::resource('/authors', AuthorController::class);
                 Route::resource('/books', BookController::class);
                 Route::resource('/publishers', PublisherController::class);

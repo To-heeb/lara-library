@@ -58,6 +58,8 @@ class UserController extends Controller
     public function show($id, User $user)
     {
         //
+        // echo $id;
+        // exit;
         return $this->isNotAuthorized($user) ? $this->isNotAuthorized($user) : new UserResource($user);
     }
 

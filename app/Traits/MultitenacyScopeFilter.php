@@ -13,7 +13,6 @@ trait MultitenacyScopeFilter
     protected static function bootMultitenacyScopeFilter()
     {
 
-
         // use this when creating the queries
         $library_id = Library::getLibrary();
 

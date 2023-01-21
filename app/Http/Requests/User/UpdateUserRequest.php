@@ -30,7 +30,7 @@ class UpdateUserRequest extends FormRequest
             'last_name' => 'required',
             'user_name' => 'required',
             'email' => 'email|required',
-            'password' =>  ['required', Password::defaults()],
+            'password' =>  ['nullable', Password::defaults()],
             'phone_number' => 'nullable'
         ];
     }
