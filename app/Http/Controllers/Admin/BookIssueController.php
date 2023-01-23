@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\BookIssue;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\BookIssueResource;
 
 class BookIssueController extends Controller
 {
@@ -15,6 +17,7 @@ class BookIssueController extends Controller
     public function index()
     {
         //
+        return BookIssueResource::collection(BookIssue::all());
     }
 
     /**
@@ -44,9 +47,10 @@ class BookIssueController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(BookIssue $bookissue)
     {
         //
+        return new BookIssueResource($bookissue);
     }
 
     /**

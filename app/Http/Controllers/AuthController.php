@@ -82,8 +82,8 @@ class AuthController extends Controller
         $adminInfo = $request->validated($request->all());
         $adminInfo['role'] = "admin";
 
-        if (auth('api')->attempt($adminInfo)) {
-            return $this->success([]);
+        if (!auth()->attempt($adminInfo)) {
+            return $this->error('', 'Credentials do no match', 401);
         }
 
         $admin = User::where([

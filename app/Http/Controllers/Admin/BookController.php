@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Author;
+use App\Models\Book;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\AuthorResource;
+use App\Http\Resources\BookResource;
 
-class AuthorController extends Controller
+class BookController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,7 +17,7 @@ class AuthorController extends Controller
     public function index()
     {
         //
-        return AuthorResource::collection(Author::all());
+        return BookResource::collection(Book::all());
     }
 
     /**
@@ -47,10 +47,10 @@ class AuthorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Author $author)
+    public function show(Book $book)
     {
         //
-        return new AuthorResource($author);
+        return new BookResource($book);
     }
 
     /**

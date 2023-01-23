@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\Publisher;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\PublisherResource;
 
 class PublisherController extends Controller
 {
@@ -15,6 +17,7 @@ class PublisherController extends Controller
     public function index()
     {
         //
+        return PublisherResource::collection(Publisher::all());
     }
 
     /**
@@ -44,9 +47,10 @@ class PublisherController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Publisher $publisher)
     {
         //
+        return new PublisherResource($publisher);
     }
 
     /**

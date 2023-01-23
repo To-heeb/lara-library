@@ -55,13 +55,13 @@ class LibraryController extends Controller
      * @param  \App\Models\Library  $library
      * @return \Illuminate\Http\Response
      */
-    public function show($id, Library $Library)
+    public function show($id, Library $library)
     {
         //
 
         //$library = Library::find($id);
 
-        return new LibraryResource($Library);
+        return new LibraryResource($library);
     }
 
 

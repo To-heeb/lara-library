@@ -10,6 +10,14 @@ use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BookIssueController;
 use App\Http\Controllers\PublisherController;
+use App\Http\Controllers\Admin\UserController as AdminController;
+use App\Http\Controllers\Admin\BookController as AdminBookController;
+use App\Http\Controllers\Admin\BookIssueController as AdminBookIssueController;
+use App\Http\Controllers\Admin\AuthorController as AdminAuthorController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\PublisherController as AdminPublisherController;
+use App\Http\Controllers\Admin\LibraryController as AdminLibraryController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -41,13 +49,13 @@ Route::group(['prefix' => 'v1'], function () {
     Route::group(['prefix' => 'admin', 'middleware' =>  ['auth:sanctum', 'role:admin']], function () {
 
         // admin
-        Route::resource('/authors', AuthorController::class)->only(['index', 'show']);
-        Route::resource('/books', BookController::class)->only(['index', 'show']);
-        Route::resource('/publishers', PublisherController::class)->only(['index', 'show']);
-        Route::resource('/categories', CategoryController::class)->only(['index', 'show']);
-        Route::resource('/libraries', LibraryController::class)->only(['index', 'show']);
-        Route::resource('/bookissues', BookIssueController::class)->only(['index', 'show']);
-        Route::resource('/users', UserController::class)->only(['index', 'show', 'update']);
+        Route::resource('/authors', AdminAuthorController::class)->only(['index', 'show']);
+        Route::resource('/books', AdminBookController::class)->only(['index', 'show']);
+        Route::resource('/publishers', AdminPublisherController::class)->only(['index', 'show']);
+        Route::resource('/categories', AdminCategoryController::class)->only(['index', 'show']);
+        Route::resource('/libraries', AdminLibraryController::class)->only(['index', 'show']);
+        Route::resource('/bookissues', AdminBookIssueController::class)->only(['index', 'show']);
+        Route::resource('/users', AdminController::class)->only(['index', 'show', 'update']);
         Route::post('/logout', [AuthController::class, 'logout']);
         //Route::delete('/users/{user}', [UserController::class, 'destroy']);
     });

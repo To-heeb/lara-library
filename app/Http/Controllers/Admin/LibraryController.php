@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\Library;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\LibraryResource;
 
 class LibraryController extends Controller
 {
@@ -15,6 +17,7 @@ class LibraryController extends Controller
     public function index()
     {
         //
+        return LibraryResource::collection(Library::all());
     }
 
     /**
@@ -44,9 +47,10 @@ class LibraryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Library $library)
     {
         //
+        return new LibraryResource($library);
     }
 
     /**
