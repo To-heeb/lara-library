@@ -15,7 +15,7 @@ class CreateAuthorsTable extends Migration
     {
         Schema::create('authors', function (Blueprint $table) {
             $table->id();
-            $table->integer('library_id');
+            $table->foreignId('library_id')->constrained();
             $table->string('name');
             $table->timestamps();
         });

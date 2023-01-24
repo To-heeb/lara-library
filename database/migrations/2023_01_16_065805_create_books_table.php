@@ -16,10 +16,10 @@ class CreateBooksTable extends Migration
         Schema::create('books', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('library_id');
-            $table->integer('author_id');
-            $table->integer('category_id');
-            $table->integer('publisher_id');
+            $table->foreignId('library_id')->constrained();
+            $table->foreignId('author_id')->constrained();
+            $table->foreignId('category_id')->constrained();
+            $table->foreignId('publisher_id')->constrained();
             $table->year('published_year');
             $table->string('total_copies');
             $table->string('available_copies');
