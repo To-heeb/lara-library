@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Library;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateLibraryRequest extends FormRequest
@@ -28,7 +29,7 @@ class UpdateLibraryRequest extends FormRequest
             'name' => 'required',
             'subdomain' => 'required|string',
             'address' => 'required|string',
-            'email' => 'email|required|unique:libraries,email',
+            'email' => ['email', 'required', 'unique:libraries,email,' . auth('sanctum')->user()->id],
             'book_issue_duration_in_days' =>  ['required', 'integer'],
             'max_issue_extentions' =>  ['required', 'integer'],
             'phone_number' => 'nullable'

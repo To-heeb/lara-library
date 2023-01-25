@@ -1,18 +1,19 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\API\V1;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class ExampleTest extends TestCase
+class AdminTest extends TestCase
 {
     /**
-     * A basic test example.
+     * A basic feature test example.
      *
      * @return void
      */
-    public function testBasicTest()
+    public function test_example()
     {
         $response = $this->get('/');
 
