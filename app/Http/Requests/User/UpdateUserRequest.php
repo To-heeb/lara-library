@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\User;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -29,7 +30,7 @@ class UpdateUserRequest extends FormRequest
             'first_name' => 'required',
             'last_name' => 'required',
             'user_name' => 'required',
-            'email' => 'email|required',
+            'email' => 'email|required|unique:users,email,' . Auth::user()->id,
             'password' =>  ['nullable', Password::defaults()],
             'phone_number' => 'nullable'
         ];
