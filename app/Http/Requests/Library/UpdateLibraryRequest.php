@@ -24,12 +24,13 @@ class UpdateLibraryRequest extends FormRequest
      */
     public function rules()
     {
+
         return [
             //
             'name' => 'required',
             'subdomain' => 'required|string',
             'address' => 'required|string',
-            'email' => ['email', 'required', 'unique:libraries,email,' . auth('sanctum')->user()->id],
+            'email' => ['email', 'required', 'unique:libraries,email,' . Auth::user()->library_id],
             'book_issue_duration_in_days' =>  ['required', 'integer'],
             'max_issue_extentions' =>  ['required', 'integer'],
             'phone_number' => 'nullable'
