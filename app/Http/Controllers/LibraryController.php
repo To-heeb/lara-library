@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Library;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\LibraryResource;
 use App\Http\Requests\Library\StoreLibraryRequest;
 use App\Http\Requests\Library\UpdateLibraryRequest;
+use App\Traits\HttpResponses;
 
 class LibraryController extends Controller
 {
+    use HttpResponses;
     /**
      * Display a listing of the resource.
      *
@@ -45,6 +49,12 @@ class LibraryController extends Controller
         $library_info = $request->validated($request->all());
 
         $library = Library::create($library_info);
+
+        if (Auth::user()->library_id == 0) {
+
+            $library_id = $library->id;
+            User::updateLibraryIDForLibrarian($library_id);
+        }
 
         return new LibraryResource($library);
     }
@@ -86,6 +96,11 @@ class LibraryController extends Controller
     public function update(UpdateLibraryRequest $request, $id, Library $library)
     {
         //
+
+        //if ($library->id == 6) dd($library->id);
+        if (Auth::user()->library_id != $library->id) {
+            return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+        }
         $request->validated($request->all());
 
         $library->update($request->all());

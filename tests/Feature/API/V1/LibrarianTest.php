@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\API\V1;
 
+use App\Models\Author;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Library;
@@ -67,7 +68,8 @@ class LibrarianTest extends TestCase
         $this->withExceptionHandling();
         $user = User::factory()->create([
             'role' => 'librarian',
-            'password' => Hash::make("19491949")
+            'password' => Hash::make("19491949"),
+            'library_id' => $this->library->id,
         ]);
 
         // 1) preparation / prepare
@@ -112,7 +114,8 @@ class LibrarianTest extends TestCase
         $role = ["admin", "user"];
         $user = User::factory()->create([
             'role' => "admin",
-            'password' => Hash::make("00000000")
+            'password' => Hash::make("00000000"),
+            'library_id' => $this->library->id,
         ]);
 
         // 1) preparation / prepare
@@ -132,8 +135,10 @@ class LibrarianTest extends TestCase
         $this->withExceptionHandling();
         $user = User::factory()->create([
             'role' => 'librarian',
-            'password' => Hash::make("19491949")
+            'password' => Hash::make("19491949"),
+            'library_id' => $this->library->id,
         ]);
+
 
         $payload = [
             "name" => "Lekki Library",
@@ -146,14 +151,11 @@ class LibrarianTest extends TestCase
 
         $library_id = $this->library->id;
         $url =  $this->base_url . "/api/v1/librarian/libraries/$library_id";
+        //dd([$user, $url]);
 
-
-        //dd($url);
         $this->actingAs($user, 'sanctum')
             ->json('put', $url, $payload, $this->header)
             ->assertStatus(Response::HTTP_OK)
-            // 3) assertion / predict
-
             ->assertJsonStructure(
                 [
                     "data" => [
@@ -176,21 +178,163 @@ class LibrarianTest extends TestCase
         $this->assertDatabaseHas(Library::class, ['name' => "Lekki Library"]);
     }
 
-    // public function test_librarian_can_not_edit_library_details_of_another_library()
-    // {
-    // }
+    public function test_librarian_can_not_edit_library_details_of_another_library()
+    {
+        $user = User::factory()->create([
+            'role' => 'librarian',
+            'password' => Hash::make("19491949"),
+            'library_id' => $this->library->id,
+        ]);
 
-    // public function test_librarian_can_create_an_author()
-    // {
-    // }
+        $payload = [
+            "name" => "Lekki Library Fake",
+            "subdomain" => $this->library->subdomain,
+            "address" => $this->library->address,
+            "email" => $this->library->email,
+            "book_issue_duration_in_days" => $this->library->book_issue_duration_in_days,
+            "max_issue_extentions" => $this->library->max_issue_extentions,
+        ];
 
-    // public function test_librarian_can_fetch_an_author_in_it_library()
-    // {
-    // }
+        $new_library = Library::factory()->create(['subdomain' => 'ikeja']);
+        $library_id = $new_library->id;
+        //dd([$library_id, $this->library->id]);
+        $url =  $this->base_url . "/api/v1/librarian/libraries/$library_id";
 
-    // public function test_librarian_can_fetch_all_author_in_it_library()
-    // {
-    // }
+
+        //dd($url);
+        $this->actingAs($user, 'sanctum')
+            ->json('put', $url, $payload, $this->header)
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function test_librarian_can_create_an_author()
+    {
+
+        $user = User::factory()->create([
+            'role' => 'librarian',
+            'password' => Hash::make("19491949"),
+            'library_id' => $this->library->id,
+        ]);
+
+        $payload = [
+            "name" => $this->faker->firstName . " " . $this->faker->lastName,
+        ];
+
+        $library_id = $this->library->id;
+
+        $url =  $this->base_url . "/api/v1/librarian/authors";
+        //dd([$url]);
+
+        $this->actingAs($user, 'sanctum')
+            ->json('post', $url, $payload, $this->header)
+            ->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            'name',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                        ]
+                    ]
+                ]
+            );
+
+        $this->assertDatabaseHas(Author::class, ['name' => $payload["name"]]);
+    }
+
+    public function test_librarian_can_fetch_an_author_in_it_library()
+    {
+        $user = User::factory()->create([
+            'role' => 'librarian',
+            'password' => Hash::make("19491949"),
+            'library_id' => $this->library->id,
+        ]);
+
+        $author = Author::factory()->create(['library_id' => $this->library->id]);
+        $author_id = $author->id;
+        $url =  $this->base_url . "/api/v1/librarian/authors/$author_id";
+
+        $this->actingAs($user, 'sanctum')
+            ->json('get', $url, [], $this->header)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            'name',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                        ]
+                    ]
+                ]
+            );
+    }
+
+    public function test_librarian_can_fetch_all_author_in_it_library()
+    {
+        $user = User::factory()->create([
+            'role' => 'librarian',
+            'password' => Hash::make("19491949"),
+            'library_id' => $this->library->id,
+        ]);
+
+        $author = Author::factory(5)->create(['library_id' => $this->library->id]);
+
+        $url =  $this->base_url . "/api/v1/librarian/authors";
+
+        $this->actingAs($user, 'sanctum')
+            ->json('get', $url, [], $this->header)
+            ->assertStatus(Response::HTTP_OK)
+            //dd($response);
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        [
+                            '*' => [
+                                "data" => [
+                                    'id',
+                                    "attributes" => [
+                                        'name',
+                                        'created_at',
+                                        'updated_at',
+                                    ],
+                                    'relationships' => [
+                                        'library_id',
+                                        'library_name',
+                                        'library_address',
+                                        'library_email',
+                                        'library_phone_number',
+                                        'book_issue_duration_in_days',
+                                        'max_issue_extentions',
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            );
+    }
 
     // public function test_librarian_can_not_fetch_an_author_not_in_it_library()
     // {
