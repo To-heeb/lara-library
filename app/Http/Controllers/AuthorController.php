@@ -4,15 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
+use Illuminate\Http\Response;
+use App\Traits\ValidateLibrary;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\AuthorResource;
 use App\Http\Requests\Author\StoreAuthor;
 use App\Http\Requests\Author\StoreAuthorRequest;
 use App\Http\Requests\Author\UpdateAuthorRequest;
-use App\Traits\HttpResponses;
 
 class AuthorController extends Controller
 {
-    use HttpResponses;
+    use HttpResponses, ValidateLibrary;
     /**
      * Display a listing of the resource.
      *
@@ -61,6 +64,9 @@ class AuthorController extends Controller
     public function show($id, Author $author)
     {
         //
+        $result = $this->validateLibrary($author);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+        //dd($author);
         return new AuthorResource($author);
     }
 
@@ -85,6 +91,9 @@ class AuthorController extends Controller
     public function update(UpdateAuthorRequest $request, $id, Author $author)
     {
         //
+        $result = $this->validateLibrary($author);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+
         $request->validated($request->all());
 
         $author->update($request->all());
@@ -101,10 +110,11 @@ class AuthorController extends Controller
     public function destroy($id, Author $author)
     {
         //
+        $result = $this->validateLibrary($author);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+
         $author->delete();
 
-        return $this->success([
-            'message' => "Author successfully deleted"
-        ]);
+        return $this->success([], "Author successfully deleted", Response::HTTP_NO_CONTENT);
     }
 }
