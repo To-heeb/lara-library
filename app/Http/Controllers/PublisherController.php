@@ -12,6 +12,20 @@ use App\Traits\HttpResponses;
 class PublisherController extends Controller
 {
     use HttpResponses;
+
+
+
+    /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('validate_library');
+    }
+
+
     /**
      * Display a listing of the resource.
      *

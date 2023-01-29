@@ -3,6 +3,7 @@
 namespace Tests\Feature\API\V1;
 
 use App\Models\Author;
+use App\Models\Category;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Library;
@@ -23,6 +24,7 @@ class LibrarianTest extends TestCase
     private $base_url;
     private $library;
     private $header;
+    private $user;
 
     public function setUp(): void
     {
@@ -32,6 +34,11 @@ class LibrarianTest extends TestCase
         $this->base_url = "http://lekki.lara-library.test";
         $this->library = Library::factory()->create(['subdomain' => 'lekki']);
         $this->header = array('Content-Type' => 'application/vnd.api+json', "Accept" => 'application/vnd.api+json');
+        $this->user = User::factory()->create([
+            'role' => 'librarian',
+            'password' => Hash::make("00000000"),
+            'library_id' => $this->library->id,
+        ]);
     }
 
     public function test_librarian_can_register_successfully()
@@ -42,8 +49,8 @@ class LibrarianTest extends TestCase
             'first_name' => $this->faker->firstName,
             'last_name'  => $this->faker->lastName,
             'user_name' => $this->faker->lastName,
-            'password' => "19491949",
-            'password_confirmation' => "19491949",
+            'password' => "00000000",
+            'password_confirmation' => "00000000",
             'email' => $this->faker->email,
             'library_id' => 1,
         ];
@@ -61,21 +68,19 @@ class LibrarianTest extends TestCase
             );
     }
 
+    // public function test_librarian_cannot_login_to_another_library(){
+    // }
 
     public function test_librarian_can_create_library_and_login_successfully()
     {
 
         $this->withExceptionHandling();
-        $user = User::factory()->create([
-            'role' => 'librarian',
-            'password' => Hash::make("19491949"),
-            'library_id' => $this->library->id,
-        ]);
+
 
         // 1) preparation / prepare
         $payload = [
-            'password' => "19491949",
-            'email' => $user->email,
+            'password' => "00000000",
+            'email' => $this->user->email,
         ];
 
         $url =   $this->base_url . "/api/v1/librarian/login";
@@ -133,12 +138,6 @@ class LibrarianTest extends TestCase
     public function test_librarian_can_edit_library_details()
     {
         $this->withExceptionHandling();
-        $user = User::factory()->create([
-            'role' => 'librarian',
-            'password' => Hash::make("19491949"),
-            'library_id' => $this->library->id,
-        ]);
-
 
         $payload = [
             "name" => "Lekki Library",
@@ -153,7 +152,7 @@ class LibrarianTest extends TestCase
         $url =  $this->base_url . "/api/v1/librarian/libraries/$library_id";
         //dd([$user, $url]);
 
-        $this->actingAs($user, 'sanctum')
+        $this->actingAs($this->user, 'sanctum')
             ->json('put', $url, $payload, $this->header)
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(
@@ -180,12 +179,6 @@ class LibrarianTest extends TestCase
 
     public function test_librarian_can_not_edit_library_details_of_another_library()
     {
-        $user = User::factory()->create([
-            'role' => 'librarian',
-            'password' => Hash::make("19491949"),
-            'library_id' => $this->library->id,
-        ]);
-
         $payload = [
             "name" => "Lekki Library Fake",
             "subdomain" => $this->library->subdomain,
@@ -202,19 +195,13 @@ class LibrarianTest extends TestCase
 
 
         //dd($url);
-        $this->actingAs($user, 'sanctum')
+        $this->actingAs($this->user, 'sanctum')
             ->json('put', $url, $payload, $this->header)
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
     public function test_librarian_can_create_an_author()
     {
-
-        $user = User::factory()->create([
-            'role' => 'librarian',
-            'password' => Hash::make("19491949"),
-            'library_id' => $this->library->id,
-        ]);
 
         $payload = [
             "name" => $this->faker->firstName . " " . $this->faker->lastName,
@@ -225,7 +212,7 @@ class LibrarianTest extends TestCase
         $url =  $this->base_url . "/api/v1/librarian/authors";
         //dd([$url]);
 
-        $this->actingAs($user, 'sanctum')
+        $this->actingAs($this->user, 'sanctum')
             ->json('post', $url, $payload, $this->header)
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure(
@@ -255,17 +242,12 @@ class LibrarianTest extends TestCase
 
     public function test_librarian_can_fetch_an_author_in_it_library()
     {
-        $user = User::factory()->create([
-            'role' => 'librarian',
-            'password' => Hash::make("19491949"),
-            'library_id' => $this->library->id,
-        ]);
 
         $author = Author::factory()->create(['library_id' => $this->library->id]);
         $author_id = $author->id;
         $url =  $this->base_url . "/api/v1/librarian/authors/$author_id";
 
-        $this->actingAs($user, 'sanctum')
+        $this->actingAs($this->user, 'sanctum')
             ->json('get', $url, [], $this->header)
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(
@@ -339,12 +321,6 @@ class LibrarianTest extends TestCase
 
     public function test_librarian_can_not_fetch_an_author_not_in_it_library()
     {
-        $user = User::factory()->create([
-            'role' => 'librarian',
-            'password' => Hash::make("19491949"),
-            'library_id' => $this->library->id,
-        ]);
-
 
         $new_library = Library::factory()->create(['subdomain' => 'ikeja']);
         $library_id = $new_library->id;
@@ -355,18 +331,13 @@ class LibrarianTest extends TestCase
         $url =  $this->base_url . "/api/v1/librarian/authors/$author_id";
 
         //dd($url)
-        $this->actingAs($user, 'sanctum')
+        $this->actingAs($this->user, 'sanctum')
             ->json('get', $url, [], $this->header)
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
     public function test_librarian_can_update_an_author()
     {
-        $user = User::factory()->create([
-            'role' => 'librarian',
-            'password' => Hash::make("19491949"),
-            'library_id' => $this->library->id,
-        ]);
 
         $library_id = $this->library->id;
 
@@ -380,7 +351,7 @@ class LibrarianTest extends TestCase
         $url =  $this->base_url . "/api/v1/librarian/authors/$author_id";
         //dd([$url]);
 
-        $this->actingAs($user, 'sanctum')
+        $this->actingAs($this->user, 'sanctum')
             ->json('put', $url, $payload, $this->header)
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(
@@ -410,11 +381,6 @@ class LibrarianTest extends TestCase
 
     public function test_librarian_can_delete_an_author()
     {
-        $user = User::factory()->create([
-            'role' => 'librarian',
-            'password' => Hash::make("19491949"),
-            'library_id' => $this->library->id,
-        ]);
 
         $library_id = $this->library->id;
 
@@ -424,49 +390,112 @@ class LibrarianTest extends TestCase
         $url =  $this->base_url . "/api/v1/librarian/authors/$author_id";
         //dd([$url]);
 
-        $this->actingAs($user, 'sanctum')
+        $this->actingAs($this->user, 'sanctum')
             ->json('delete', $url, [], $this->header)
             ->assertStatus(Response::HTTP_NO_CONTENT);
 
         $this->assertDatabaseMissing(Author::class, ['id' => $author_id]);
     }
 
+    public function test_librarian_can_add_a_category()
+    {
+        $payload = [
+            "name" => $this->faker->word,
+        ];
 
-    // public function test_librarian_can_add_a_book()
-    // {
-    // }
+        $library_id = $this->library->id;
 
-    // public function test_librarian_can_update_a_book()
-    // {
-    // }
+        $url =  $this->base_url . "/api/v1/librarian/categories";
+        //dd([$url]);
 
-    // public function test_librarian_cannot_update_a_book_not_in_it_library()
-    // {
-    // }
+        $this->actingAs($this->user, 'sanctum')
+            ->json('post', $url, $payload, $this->header)
+            ->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            'name',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                        ]
+                    ]
+                ]
+            );
 
-    // public function test_librarian_can_delete_a_book()
-    // {
-    // }
+        $this->assertDatabaseHas(Category::class, ['name' => $payload["name"]]);
+    }
 
-    // public function test_librarian_can_fetch_a_book()
-    // {
-    // }
+    public function test_librarian_can_update_a_category()
+    {
+        $library_id = $this->library->id;
 
-    // public function test_librarian_can_fetch_all_books_in_library()
-    // {
-    // }
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $category_id = $category->id;
 
-    // public function test_librarian_can_add_a_category()
-    // {
-    // }
+        $payload = [
+            "name" => "Fiction",
+        ];
 
-    // public function test_librarian_can_update_a_category()
-    // {
-    // }
+        $url =  $this->base_url . "/api/v1/librarian/categories/$category_id";
+        //dd([$url, $library_id]);
 
-    // public function test_librarian_cannot_add_a_category_to_another_library()
-    // {
-    // }
+        $this->actingAs($this->user, 'sanctum')
+            ->json('put', $url, $payload, $this->header)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            'name',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                        ]
+                    ]
+                ]
+            );
+
+        $this->assertDatabaseHas(Category::class, ['name' => "Fiction"]);
+    }
+
+    public function test_librarian_cannot_add_a_category_to_another_library()
+    {
+
+        $new_library = Library::factory()->create(['subdomain' => 'ikeja']);
+
+        $payload = [
+            "name" => "War",
+        ];
+
+        $url =  "http://ikeja.lara-library.test/api/v1/librarian/categories";
+        //dd([$url, $library_id, $this->library->id]);
+
+        $response = $this->actingAs($this->user, 'sanctum')
+            ->json('post', $url, $payload, $this->header)
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+
+        $this->assertDatabaseMissing(Category::class, ['name' => "War"]);
+    }
 
     // public function test_librarian_can_delete_a_category()
     // {
@@ -479,7 +508,6 @@ class LibrarianTest extends TestCase
     // public function test_librarian_can_fetch_all_categories_in_it_library()
     // {
     // }
-
 
     // public function test_librarian_can_add_a_publisher()
     // {
@@ -515,6 +543,30 @@ class LibrarianTest extends TestCase
     // }
 
     // public function test_librarian_cannot_fetch_a_users_in_another_library()
+    // {
+    // }
+
+    // public function test_librarian_can_add_a_book()
+    // {
+    // }
+
+    // public function test_librarian_can_update_a_book()
+    // {
+    // }
+
+    // public function test_librarian_cannot_update_a_book_not_in_it_library()
+    // {
+    // }
+
+    // public function test_librarian_can_delete_a_book()
+    // {
+    // }
+
+    // public function test_librarian_can_fetch_a_book()
+    // {
+    // }
+
+    // public function test_librarian_can_fetch_all_books_in_library()
     // {
     // }
 

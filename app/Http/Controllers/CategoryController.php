@@ -4,14 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
+use Illuminate\Http\Response;
 use App\Http\Resources\CategoryResource;
 use App\Http\Requests\Category\StoreCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
-use App\Traits\HttpResponses;
+use App\Traits\ValidateLibrary;
 
 class CategoryController extends Controller
 {
-    use HttpResponses;
+    use HttpResponses, ValidateLibrary;
+
+
+    /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('validate_library');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -42,6 +56,9 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request)
     {
         //
+        // $result = $this->validateUserLibrary();
+        // if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+
         $category_info = $request->validated($request->all());
 
         $category = Category::create($category_info);
@@ -58,6 +75,9 @@ class CategoryController extends Controller
     public function show($id, Category $category)
     {
         //
+        $result = $this->validateLibrary($category);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+
         return new CategoryResource($category);
     }
 
@@ -82,6 +102,9 @@ class CategoryController extends Controller
     public function update(UpdateCategoryRequest $request, $id, Category $category)
     {
         //
+        $result = $this->validateLibrary($category);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+
         $request->validated($request->all());
 
         $category->update($request->all());
@@ -98,6 +121,9 @@ class CategoryController extends Controller
     public function destroy($id, Category $category)
     {
         //
+        $result = $this->validateLibrary($category);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+
         $category->delete();
 
         return $this->success([
