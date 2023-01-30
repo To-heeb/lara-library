@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Publisher;
 use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
+use Illuminate\Http\Response;
 use App\Http\Resources\PublisherResource;
 use App\Http\Requests\Publisher\StorePublisherRequest;
 use App\Http\Requests\Publisher\UpdatePublisherRequest;
-use App\Traits\HttpResponses;
 
 class PublisherController extends Controller
 {
@@ -72,6 +73,9 @@ class PublisherController extends Controller
     public function show($id, Publisher $publisher)
     {
         //
+        $result = $this->validateLibrary($publisher);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+
         return new PublisherResource($publisher);
     }
 
@@ -96,6 +100,9 @@ class PublisherController extends Controller
     public function update(UpdatePublisherRequest $request, $id, Publisher $publisher)
     {
         //
+        $result = $this->validateLibrary($publisher);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+
         $request->validated($request->all());
 
         $publisher->update($request->all());
@@ -112,10 +119,11 @@ class PublisherController extends Controller
     public function destroy($id, Publisher $publisher)
     {
         //
+        $result = $this->validateLibrary($publisher);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+
         $publisher->delete();
 
-        return $this->success([
-            'message' => "Publisher successfully deleted"
-        ]);
+        return $this->success([], "Publisher successfully deleted", Response::HTTP_NO_CONTENT);
     }
 }

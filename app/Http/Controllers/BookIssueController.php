@@ -7,6 +7,7 @@ use App\Models\Library;
 use App\Models\BookIssue;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\BookIssueResource;
 use App\Http\Requests\BookIssue\StoreBookIssueRequest;
@@ -94,6 +95,9 @@ class BookIssueController extends Controller
     public function show($id, BookIssue $bookissue)
     {
         //
+        $result = $this->validateLibrary($bookissue);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+
         if (Auth::user()->role == "user") {
             if (Auth::user()->id != $bookissue->user_id) {
                 return $this->error('', "You are not authorized to make this request", 403);
@@ -124,9 +128,12 @@ class BookIssueController extends Controller
     public function update(UpdateBookIssueRequest $request, $id, BookIssue $bookissue)
     {
         //
+        $result = $this->validateLibrary($bookissue);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+
         if (Auth::user()->role == "user") {
             if (Auth::user()->id != $bookissue->user_id) {
-                return $this->error('', "You are not authorized to make this request", 403);
+                return $this->error('', "You are not authorized to make this request", Response::HTTP_FORBIDDEN);
             }
         }
 
@@ -147,6 +154,9 @@ class BookIssueController extends Controller
     public function destroy(BookIssue $bookIssue)
     {
         //
+        $result = $this->validateLibrary($bookIssue);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+
         $bookIssue->delete();
 
         $message = "BookIssue successfully deleted";
@@ -164,6 +174,8 @@ class BookIssueController extends Controller
      */
     public function returnBook(ReturnBookIssueRequest $request, $id, BookIssue $bookissue)
     {
+        $result = $this->validateLibrary($bookissue);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
 
         $book_issue_info = $request->validated($request->all());
         $pending_book = $this->validateBook($book_issue_info);
@@ -191,6 +203,8 @@ class BookIssueController extends Controller
      */
     public function extendBook(ExtendBookIssueRequest $request, $id, BookIssue $bookissue)
     {
+        $result = $this->validateLibrary($bookissue);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
 
         $book_issue_info = $request->validated($request->all());
 

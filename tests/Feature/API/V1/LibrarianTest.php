@@ -7,6 +7,7 @@ use App\Models\Category;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Library;
+use App\Models\Publisher;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -73,9 +74,7 @@ class LibrarianTest extends TestCase
 
     public function test_librarian_can_create_library_and_login_successfully()
     {
-
         $this->withExceptionHandling();
-
 
         // 1) preparation / prepare
         $payload = [
@@ -497,27 +496,144 @@ class LibrarianTest extends TestCase
         $this->assertDatabaseMissing(Category::class, ['name' => "War"]);
     }
 
-    // public function test_librarian_can_delete_a_category()
-    // {
-    // }
+    public function test_librarian_can_delete_a_category()
+    {
+        $library_id = $this->library->id;
 
-    // public function test_librarian_can_fetch_a_category()
-    // {
-    // }
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $category_id = $category->id;
+
+        $url =  $this->base_url . "/api/v1/librarian/categories/$category_id";
+        //dd([$url, $library_id]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('delete', $url, [], $this->header)
+            ->assertStatus(Response::HTTP_NO_CONTENT);
+
+        $this->assertDatabaseMissing(Category::class, ['name' =>  $category->name]);
+    }
+
+    public function test_librarian_can_fetch_a_category()
+    {
+        $library_id = $this->library->id;
+
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $category_id = $category->id;
+
+        $url =  $this->base_url . "/api/v1/librarian/categories/$category_id";
+        //dd([$url, $library_id]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('get', $url, [], $this->header)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            'name',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                        ]
+                    ]
+                ]
+            );
+    }
 
     // public function test_librarian_can_fetch_all_categories_in_it_library()
     // {
     // }
 
-    // public function test_librarian_can_add_a_publisher()
-    // {
-    // }
+    public function test_librarian_can_add_a_publisher()
+    {
 
-    // public function test_librarian_can_update_a_publisher()
-    // {
-    // }
+        $library_id = $this->library->id;
 
-    // public function test_librarian_cannot_delete_a_piblisher_in_another_library()
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $publisher_id = $publisher->id;
+
+        $payload = [
+            "name" => "Ben Jack Publishing House",
+        ];
+
+        $url =  $this->base_url . "/api/v1/librarian/publishers/$publisher_id";
+        //dd([$url]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('put', $url, $payload, $this->header)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            'name',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                        ]
+                    ]
+                ]
+            );
+
+        $this->assertDatabaseHas(Publisher::class, ['name' => $payload["name"]]);
+    }
+
+    public function test_librarian_can_update_a_publisher()
+    {
+        $payload = [
+            "name" => $this->faker->word,
+        ];
+
+        $url =  $this->base_url . "/api/v1/librarian/publishers";
+        //dd([$url]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('post', $url, $payload, $this->header)
+            ->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            'name',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                        ]
+                    ]
+                ]
+            );
+
+        $this->assertDatabaseHas(Publisher::class, ['name' => $payload["name"]]);
+    }
+
+    // public function test_librarian_cannot_delete_a_publisher_in_another_library()
     // {
     // }
 

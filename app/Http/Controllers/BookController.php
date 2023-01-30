@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
+use Illuminate\Http\Response;
 use App\Http\Resources\BookResource;
 use App\Http\Requests\Book\StoreBookRequest;
 use App\Http\Requests\Book\UpdateBookRequest;
-use App\Traits\HttpResponses;
 
 class BookController extends Controller
 {
@@ -111,8 +112,6 @@ class BookController extends Controller
         //
         $book->delete();
 
-        return $this->success([
-            'message' => "Book successfully deleted"
-        ]);
+        return $this->success([], "Book successfully deleted", Response::HTTP_NO_CONTENT);
     }
 }

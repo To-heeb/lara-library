@@ -56,9 +56,6 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request)
     {
         //
-        // $result = $this->validateUserLibrary();
-        // if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
-
         $category_info = $request->validated($request->all());
 
         $category = Category::create($category_info);
@@ -126,8 +123,6 @@ class CategoryController extends Controller
 
         $category->delete();
 
-        return $this->success([
-            'message' => "Category successfully deleted"
-        ]);
+        return $this->success([], "Category successfully deleted", Response::HTTP_NO_CONTENT);
     }
 }
