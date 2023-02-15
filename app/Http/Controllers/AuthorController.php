@@ -105,8 +105,6 @@ class AuthorController extends Controller
         $result = $this->validateLibrary($author);
         if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
 
-        $request->validated($request->all());
-
         $author->update($request->all());
 
         return new AuthorResource($author);
