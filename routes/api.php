@@ -77,7 +77,7 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
             Route::post('/register', [AuthController::class, 'user_register']);
         });
 
-        Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::group(['middleware' => ['auth:sanctum', 'validate_library']], function () {
 
             // user
             Route::group(
