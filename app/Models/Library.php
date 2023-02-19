@@ -43,7 +43,7 @@ class Library extends Model
         if (!$subdomain) return 0;
         if ($subdomain  == $app_short_url[0] || $subdomain  == $app_short_url[1]) return 0;
 
-        $library = Library::where('subdomain', 'LIKE', $subdomain)->first();
+        $library = Library::where('subdomain', '=', $subdomain)->first();
         //echo $subdomain;
 
         return $library->id;

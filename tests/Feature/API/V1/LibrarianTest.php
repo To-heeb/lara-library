@@ -2,11 +2,12 @@
 
 namespace Tests\Feature\API\V1;
 
-use App\Models\Author;
-use App\Models\Category;
 use Tests\TestCase;
+use App\Models\Book;
 use App\Models\User;
+use App\Models\Author;
 use App\Models\Library;
+use App\Models\Category;
 use App\Models\Publisher;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -69,10 +70,24 @@ class LibrarianTest extends TestCase
             );
     }
 
-    // public function test_librarian_cannot_login_to_another_library(){
-    // }
+    public function test_librarian_cannot_login_to_another_library()
+    {
+        $payload = [
+            'password' => "00000000",
+            'email' => $this->user->email,
+        ];
 
-    public function test_librarian_can_create_library_and_login_successfully()
+        $new_library = Library::factory()->create(['subdomain' => 'ikeja']);
+
+        $url = "http://ikeja.lara-library.test/api/v1/librarian/login";
+
+        //dd([$this->user, $new_library]);
+        // 2) action / perform
+        $response = $this->json('post', $url, $payload, $this->header)
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function test_librarian_can_login_successfully()
     {
         $this->withExceptionHandling();
 
@@ -542,6 +557,23 @@ class LibrarianTest extends TestCase
             );
     }
 
+    public function test_librarian_cannot_fetch_a_category_from_another_library()
+    {
+        $new_library = Library::factory()->create(['subdomain' => 'ikeja']);
+
+        $library_id = $new_library->id;
+
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $category_id = $category->id;
+
+        $url =  $this->base_url . "/api/v1/librarian/categories/$category_id";
+        //dd([$url, $library_id]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('get', $url, [], $this->header)
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
     public function test_librarian_can_fetch_all_categories_in_it_library()
     {
         $library_id = $this->library->id;
@@ -863,9 +895,67 @@ class LibrarianTest extends TestCase
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
-    // public function test_librarian_can_add_a_book()
-    // {
-    // }
+    public function test_librarian_can_add_a_book()
+    {
+
+        $library_id = $this->library->id;
+
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
+        $payload = [
+            "name" => $this->faker->word,
+            "publisher_id" => $publisher->id,
+            "category_id" => $category->id,
+            "author_id" => $author->id,
+            "available_copies" => 10,
+            "total_copies" => 10,
+            "isbn" => $this->faker->phoneNumber,
+            "published_year" => $this->faker->year,
+            "edition" => '2nd',
+        ];
+
+        $url =  $this->base_url . "/api/v1/librarian/books";
+        //dd([$url]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('post', $url, $payload, $this->header)
+            ->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            "name",
+                            "published_year",
+                            "total_copies",
+                            "available_copies",
+                            "isbn",
+                            "edition",
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                            "author_id",
+                            "author_name",
+                            "publisher_id",
+                            "publisher_name",
+                            "category_id",
+                            "category_name"
+                        ]
+                    ]
+                ]
+            );
+
+        $this->assertDatabaseHas(Book::class, ['name' => $payload["name"]]);
+    }
 
     // public function test_librarian_can_update_a_book()
     // {

@@ -74,8 +74,8 @@ class PublisherController extends Controller
     public function show($id, Publisher $publisher)
     {
         //
-        $result = $this->validateLibrary($publisher);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+        // $result = $this->validateLibrary($publisher);
+        // if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
 
         return new PublisherResource($publisher);
     }

@@ -26,7 +26,8 @@ trait MultitenacyScopeFilter
 
                     if ($model instanceof User and $model->role == "admin") {
                         $model->library_id = 0;
-                    } else {
+                    }
+                    if (auth('sanctum')->user()->role != "admin" && auth('sanctum')->user()->library_id == $library_id && !$model instanceof User) {
                         $model->library_id = $library_id;
                     }
                 });

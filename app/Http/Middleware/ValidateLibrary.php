@@ -22,9 +22,9 @@ class ValidateLibrary
     public function handle(Request $request, Closure $next)
     {
         $library_id = Library::getLibrary();
-
-        if ($library_id != Auth::user()->library_id && Auth::user()->role != "admin")
-            return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);;
+        dd([$library_id, auth('sanctum')->user()->library_id]);
+        if ($library_id != auth('sanctum')->user()->library_id)
+            return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
 
         return $next($request);
     }

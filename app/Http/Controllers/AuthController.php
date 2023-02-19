@@ -53,6 +53,7 @@ class AuthController extends Controller
     {
         $librarianInfo = $request->validated($request->all());
         $librarianInfo['role'] = "librarian";
+        $librarianInfo['library_id'] =  Library::getLibrary();
 
         if (!auth()->attempt($librarianInfo)) {
             return $this->error('', 'Credentials do no match', 401);
@@ -105,6 +106,10 @@ class AuthController extends Controller
         $userInfo['password'] =  Hash::make($userInfo['password']);
         $userInfo['role'] = "user";
         $userInfo['name'] = $userInfo['user_name'];
+        $userInfo['library_id'] =  Library::getLibrary();
+
+        if ($userInfo['library_id'] == 0)
+            return $this->error('', 'Invalid Subdomain', 401);
 
         $user = User::create($userInfo);
 
