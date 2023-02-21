@@ -94,6 +94,7 @@ class BookController extends Controller
     public function update(UpdateBookRequest $request, $id, Book $book)
     {
         //
+        $result = $this->validateLibrary($book);
         $request->validated($request->all());
 
         $book->update($request->all());
