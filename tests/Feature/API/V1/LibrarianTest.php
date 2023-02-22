@@ -1035,11 +1035,79 @@ class LibrarianTest extends TestCase
 
     public function test_librarian_cannot_update_a_book_not_in_it_library()
     {
+        $new_library = Library::factory()->create(['subdomain' => 'ikeja']);
+        $library_id = $new_library->id;
+
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
+        $book = Book::factory()->create([
+            'library_id' => $library_id,
+            "publisher_id" => $publisher->id,
+            "category_id" => $category->id,
+            "author_id" => $author->id,
+            "available_copies" => 10,
+            "total_copies" => 10,
+            "isbn" => $this->faker->phoneNumber,
+            "published_year" => $this->faker->year,
+            "edition" => '2nd',
+        ]);
+
+        $book_id = $book->id;
+
+        $payload = [
+            "name" => "Half of a yellow sun",
+            'library_id' => $book->library_id,
+            "publisher_id" => $book->publisher_id,
+            "category_id" => $book->category_id,
+            "author_id" => $book->author_id,
+            "available_copies" => $book->available_copies,
+            "total_copies" => $book->total_copies,
+            "isbn" => $book->isbn,
+            "published_year" => $book->published_year,
+            "edition" => $book->edition,
+        ];
+
+        $url =  $this->base_url . "/api/v1/librarian/books/$book_id";
+        //dd([$url]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('put', $url, $payload, $this->header)
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+
+        $this->assertDatabaseMissing(Book::class, ['name' => $payload["name"]]);
     }
 
-    // public function test_librarian_can_delete_a_book()
-    // {
-    // }
+    public function test_librarian_can_delete_a_book()
+    {
+        $library_id = $this->library->id;
+
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
+        $book = Book::factory()->create([
+            'library_id' => $library_id,
+            "publisher_id" => $publisher->id,
+            "category_id" => $category->id,
+            "author_id" => $author->id,
+            "available_copies" => 10,
+            "total_copies" => 10,
+            "isbn" => $this->faker->phoneNumber,
+            "published_year" => $this->faker->year,
+            "edition" => '2nd',
+        ]);
+
+        $book_id = $book->id;
+
+        $url =  $this->base_url . "/api/v1/librarian/books/$book_id";
+        //dd([$url]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('delete', $url, [], $this->header)
+            ->assertStatus(Response::HTTP_NO_CONTENT);
+
+        $this->assertDatabaseMissing(Publisher::class, ['name' => $publisher]);
+    }
 
     // public function test_librarian_can_fetch_a_book()
     // {

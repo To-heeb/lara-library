@@ -6,13 +6,14 @@ use App\Models\Book;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Response;
+use App\Traits\ValidateLibrary;
 use App\Http\Resources\BookResource;
 use App\Http\Requests\Book\StoreBookRequest;
 use App\Http\Requests\Book\UpdateBookRequest;
 
 class BookController extends Controller
 {
-    use HttpResponses;
+    use HttpResponses, ValidateLibrary;
 
     /**
      * Instantiate a new controller instance.
@@ -95,6 +96,8 @@ class BookController extends Controller
     {
         //
         $result = $this->validateLibrary($book);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+
         $request->validated($request->all());
 
         $book->update($request->all());
@@ -111,6 +114,8 @@ class BookController extends Controller
     public function destroy($id, Book $book)
     {
         //
+        $result = $this->validateLibrary($book);
+        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
         $book->delete();
 
         return $this->success([], "Book successfully deleted", Response::HTTP_NO_CONTENT);
