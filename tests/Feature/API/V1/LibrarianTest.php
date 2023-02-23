@@ -1109,13 +1109,116 @@ class LibrarianTest extends TestCase
         $this->assertDatabaseMissing(Publisher::class, ['name' => $publisher]);
     }
 
-    // public function test_librarian_can_fetch_a_book()
-    // {
-    // }
+    public function test_librarian_can_fetch_a_book()
+    {
+        $library_id = $this->library->id;
 
-    // public function test_librarian_can_fetch_all_books_in_library()
-    // {
-    // }
+
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
+        $book = Book::factory()->create([
+            'library_id' => $library_id,
+            "publisher_id" => $publisher->id,
+            "category_id" => $category->id,
+            "author_id" => $author->id,
+        ]);
+        $book_id = $book->id;
+
+        $url  = $this->base_url . "/api/v1/librarian/books/$book_id";
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('get', $url, [], $this->header)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            "name",
+                            "published_year",
+                            "total_copies",
+                            "available_copies",
+                            "isbn",
+                            "edition",
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                            "author_id",
+                            "author_name",
+                            "publisher_id",
+                            "publisher_name",
+                            "category_id",
+                            "category_name"
+                        ]
+                    ]
+                ]
+            );
+    }
+
+    public function test_librarian_can_fetch_all_books_in_library()
+    {
+        $library_id = $this->library->id;
+
+
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
+        $book = Book::factory(10)->create([
+            'library_id' => $library_id,
+            "publisher_id" => $publisher->id,
+            "category_id" => $category->id,
+            "author_id" => $author->id,
+        ]);
+
+        $url  = $this->base_url . "/api/v1/librarian/books";
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('get', $url, [], $this->header)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        [
+                            'id',
+                            "attributes" => [
+                                "name",
+                                "published_year",
+                                "total_copies",
+                                "available_copies",
+                                "isbn",
+                                "edition",
+                                'created_at',
+                                'updated_at',
+                            ],
+                            'relationships' => [
+                                'library_id',
+                                'library_name',
+                                'library_address',
+                                'library_email',
+                                'library_phone_number',
+                                'book_issue_duration_in_days',
+                                'max_issue_extentions',
+                                "author_id",
+                                "author_name",
+                                "publisher_id",
+                                "publisher_name",
+                                "category_id",
+                                "category_name"
+                            ]
+                        ]
+                    ]
+                ]
+            );
+    }
 
 
     // TODOS
