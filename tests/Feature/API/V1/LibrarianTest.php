@@ -34,7 +34,7 @@ class LibrarianTest extends TestCase
 
         //"http://lekki". config('app.short_url');
         $this->base_url = "http://lekki.lara-library.test";
-        $this->library = Library::factory()->create(['subdomain' => 'lekki']);
+        $this->library = Library::factory()->create(['subdomain' => 'lekki', 'book_issue_duration_in_days' => 5]);
         $this->header = array('Content-Type' => 'application/vnd.api+json', "Accept" => 'application/vnd.api+json');
         $this->user = User::factory()->create([
             'role' => 'librarian',
@@ -1223,4 +1223,75 @@ class LibrarianTest extends TestCase
 
     // TODOS
     //-book issue for users in the same library
+    public function test_librarian_can_create_a_bookissue()
+    {
+
+        $library_id = $this->library->id;
+
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
+
+        $book = Book::factory()->create([
+            'library_id' => $library_id,
+            "publisher_id" => $publisher->id,
+            "category_id" => $category->id,
+            "author_id" => $author->id,
+            "available_copies" => 10,
+            "total_copies" => 10,
+            "isbn" => $this->faker->phoneNumber,
+            "published_year" => $this->faker->year,
+            "edition" => '2nd',
+        ]);
+
+        $payload = [
+            "user_id" => $this->user->id,
+            "return_date" =>  "2023-02-26",
+            "book_id" => $book->id,
+        ];
+
+        $url =  $this->base_url . "/api/v1/librarian/bookissues";
+        //dd([$url]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('post', $url, $payload, $this->header)
+            ->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            'issue_date',
+                            'return_date',
+                            'due_date',
+                            'status',
+                            'extention_num',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                            'book_id',
+                            'book_name',
+                            'book_author',
+                            'book_category',
+                            'book_publisher',
+                            'total_copies',
+                            'available_copies',
+                            'published_year',
+                            'isbn',
+                            'edition',
+                        ]
+                    ]
+                ]
+            );
+
+        //$this->assertDatabaseHas(Book::class, ['available_copies' => ($book->total_copies - 1)]);
+    }
 }
