@@ -1394,4 +1394,24 @@ class LibrarianTest extends TestCase
 
         $this->assertDatabaseHas(BookIssue::class, ['return_date' => $payload['return_date']]);
     }
+
+    public function test_librarian_cannot_extend_a_bookissue_from_another_library()
+    {
+    }
+
+    public function test_librarian_can_return_a_bookissue()
+    {
+    }
+
+    public function test_librarian_can_delete_a_bookissue()
+    {
+    }
+
+    public function test_librarian_can_fetch_a_bookissue()
+    {
+    }
+
+    public function test_librarian_can_fetch_all_bookissues()
+    {
+    }
 }

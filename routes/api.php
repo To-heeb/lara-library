@@ -91,7 +91,9 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
                     Route::resource('/publishers', PublisherController::class)->only(['index', 'show']);
                     Route::resource('/categories', CategoryController::class)->only(['index', 'show']);
                     Route::get('/libraries/{library}', [LibraryController::class, 'show']);
-                    Route::resource('/bookissues', BookIssueController::class)->only(['store', 'show', 'update']);
+                    Route::resource('/bookissues', BookIssueController::class)->only(['store', 'show']);
+                    Route::put('/bookissues/{bookissue}/extend', [BookIssueController::class, 'extendBook']);
+                    Route::put('/bookissues/{bookissue}/return', [BookIssueController::class, 'returnBook']);
                     Route::resource('/users', UserController::class)->only(['show', 'update', 'destroy']);
                 }
             );
