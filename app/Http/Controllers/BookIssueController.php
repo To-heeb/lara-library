@@ -14,10 +14,11 @@ use App\Http\Requests\BookIssue\StoreBookIssueRequest;
 use App\Http\Requests\BookIssue\ExtendBookIssueRequest;
 use App\Http\Requests\BookIssue\ReturnBookIssueRequest;
 use App\Http\Requests\BookIssue\UpdateBookIssueRequest;
+use App\Traits\ValidateLibrary;
 
 class BookIssueController extends Controller
 {
-    use HttpResponses;
+    use HttpResponses, ValidateLibrary;
 
 
     /**
@@ -107,16 +108,6 @@ class BookIssueController extends Controller
         return new BookIssueResource($bookissue);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\BookIssue  $bookIssue
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(BookIssue $bookissue)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -204,6 +195,7 @@ class BookIssueController extends Controller
     public function extendBook(ExtendBookIssueRequest $request, $id, BookIssue $bookissue)
     {
         $result = $this->validateLibrary($bookissue);
+        //dd("I got here");
         if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
 
         $book_issue_info = $request->validated($request->all());

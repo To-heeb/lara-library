@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Author;
 use App\Models\Library;
 use App\Models\Category;
+use App\Models\BookIssue;
 use App\Models\Publisher;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -1246,7 +1247,7 @@ class LibrarianTest extends TestCase
 
         $payload = [
             "user_id" => $this->user->id,
-            "return_date" =>  "2023-02-26",
+            "return_date" =>  "2023-02-28",
             "book_id" => $book->id,
         ];
 
@@ -1292,6 +1293,105 @@ class LibrarianTest extends TestCase
                 ]
             );
 
-        //$this->assertDatabaseHas(Book::class, ['available_copies' => ($book->total_copies - 1)]);
+        $this->assertDatabaseHas(Book::class, ['available_copies' => ($book->total_copies - 1)]);
+    }
+
+    public function test_librarian_can_extend_a_bookissue()
+    {
+
+        $library_id = $this->library->id;
+
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
+
+        $book = Book::factory()->create([
+            'library_id' => $library_id,
+            "publisher_id" => $publisher->id,
+            "category_id" => $category->id,
+            "author_id" => $author->id,
+            "available_copies" => 10,
+            "total_copies" => 10,
+            "isbn" => $this->faker->phoneNumber,
+            "published_year" => $this->faker->year,
+            "edition" => '2nd',
+        ]);
+
+        $book_issue = BookIssue::factory()->create([
+            'library_id' => $library_id,
+            "user_id" => $this->user->id,
+            "return_date" =>  "2023-02-28",
+            "book_id" => $book->id,
+        ]);
+
+        $payload = [
+            "user_id" => $this->user->id,
+            "return_date" =>  "2023-02-28",
+            "book_id" => $book->id,
+        ];
+
+        $url =  $this->base_url . "/api/v1/librarian/bookissues/$book_issue->id/extend";
+        //dd([$url]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('put', $url, $payload, $this->header)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "status",
+                    "message",
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            'issue_date',
+                            'return_date',
+                            'due_date',
+                            'status',
+                            'extention_num',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                            'book_id',
+                            'book_name',
+                            'book_author' => [
+                                "id",
+                                "library_id",
+                                "name",
+                                "created_at",
+                                "updated_at"
+                            ],
+                            'book_category' => [
+                                "id",
+                                "name",
+                                "library_id",
+                                "created_at",
+                                "updated_at"
+                            ],
+                            'book_publisher' => [
+                                "id",
+                                "name",
+                                "library_id",
+                                "created_at",
+                                "updated_at"
+                            ],
+                            'total_copies',
+                            'available_copies',
+                            'published_year',
+                            'isbn',
+                            'edition',
+                        ]
+                    ]
+                ]
+            );
+
+        $this->assertDatabaseHas(BookIssue::class, ['return_date' => $payload['return_date']]);
     }
 }
