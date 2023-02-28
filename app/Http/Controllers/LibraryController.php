@@ -15,6 +15,7 @@ use App\Traits\HttpResponses;
 class LibraryController extends Controller
 {
     use HttpResponses;
+
     /**
      * Display a listing of the resource.
      *
@@ -26,15 +27,6 @@ class LibraryController extends Controller
         return LibraryResource::collection(Library::all());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -74,18 +66,6 @@ class LibraryController extends Controller
         return new LibraryResource($library);
     }
 
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Library  $library
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Library $library)
-    {
-        //
-    }
-
     /**
      * Update the specified resource in storage.
      *
@@ -95,7 +75,6 @@ class LibraryController extends Controller
      */
     public function update(UpdateLibraryRequest $request, $id, Library $library)
     {
-        //
 
         //if ($library->id == 6) dd($library->id);
         if (Auth::user()->library_id != $library->id) {

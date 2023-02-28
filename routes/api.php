@@ -103,12 +103,16 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
                 'prefix' => 'librarian',
                 'middleware' => 'role:librarian'
             ], function () {
-                Route::resource('/authors', AuthorController::class);
-                Route::resource('/books', BookController::class);
-                Route::resource('/publishers', PublisherController::class);
-                Route::resource('/categories', CategoryController::class);
-                Route::resource('/libraries', LibraryController::class);
-                Route::resource('/bookissues', BookIssueController::class);
+
+                Route::resources([
+                    'authors' => AuthorController::class,
+                    'books' => BookController::class,
+                    'publishers' => PublisherController::class,
+                    'categories' => CategoryController::class,
+                    'libraries' => LibraryController::class,
+                    'bookissues' => BookIssueController::class,
+                ]);
+
                 Route::put('/bookissues/{bookissue}/extend', [BookIssueController::class, 'extendBook']);
                 Route::put('/bookissues/{bookissue}/return', [BookIssueController::class, 'returnBook']);
                 Route::resource('/users', UserController::class)->only(['index', 'update', 'show']);

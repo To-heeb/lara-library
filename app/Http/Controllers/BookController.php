@@ -15,15 +15,6 @@ class BookController extends Controller
 {
     use HttpResponses, ValidateLibrary;
 
-    /**
-     * Instantiate a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('validate_library');
-    }
 
     /**
      * Display a listing of the resource.
@@ -34,16 +25,6 @@ class BookController extends Controller
     {
         //
         return BookResource::collection(Book::all());
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -72,17 +53,6 @@ class BookController extends Controller
     {
         //
         return new BookResource($book);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Book  $book
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Book $book)
-    {
-        //
     }
 
     /**
