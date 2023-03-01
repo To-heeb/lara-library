@@ -20,17 +20,6 @@ class BookIssueController extends Controller
 {
     use HttpResponses, ValidateLibrary;
 
-
-    /**
-     * Instantiate a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('validate_library');
-    }
-
     /**
      * Display a listing of the resource.
      *

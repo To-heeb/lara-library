@@ -20,7 +20,7 @@ class BookIssueReturnController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ReturnBookIssueRequest $request, $id, BookIssue $bookissue)
+    public function update(ReturnBookIssueRequest $request, $id, BookIssue $bookissue)
     {
         //
         $result = $this->validateLibrary($bookissue);

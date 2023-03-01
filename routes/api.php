@@ -10,13 +10,15 @@ use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BookIssueController;
 use App\Http\Controllers\PublisherController;
+use App\Http\Controllers\BookIssueExtendController;
+use App\Http\Controllers\BookIssueReturnController;
 use App\Http\Controllers\Admin\UserController as AdminController;
 use App\Http\Controllers\Admin\BookController as AdminBookController;
-use App\Http\Controllers\Admin\BookIssueController as AdminBookIssueController;
 use App\Http\Controllers\Admin\AuthorController as AdminAuthorController;
-use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
-use App\Http\Controllers\Admin\PublisherController as AdminPublisherController;
 use App\Http\Controllers\Admin\LibraryController as AdminLibraryController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\BookIssueController as AdminBookIssueController;
+use App\Http\Controllers\Admin\PublisherController as AdminPublisherController;
 
 
 /*
@@ -104,7 +106,7 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
                 'middleware' => 'role:librarian'
             ], function () {
 
-                Route::resources([
+                Route::apiResources([
                     'authors' => AuthorController::class,
                     'books' => BookController::class,
                     'publishers' => PublisherController::class,
@@ -113,8 +115,8 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
                     'bookissues' => BookIssueController::class,
                 ]);
 
-                Route::put('/bookissues/{bookissue}/extend', [BookIssueController::class, 'extendBook']);
-                Route::put('/bookissues/{bookissue}/return', [BookIssueController::class, 'returnBook']);
+                Route::put('/bookissues_extend/{bookissue}', [BookIssueExtendController::class, 'update']);
+                Route::put('/bookissues_return/{bookissue}', [BookIssueReturnController::class, 'update']);
                 Route::resource('/users', UserController::class)->only(['index', 'update', 'show']);
                 //Route::delete('/users/{user}', [UserController::class, 'destroy']);
             });

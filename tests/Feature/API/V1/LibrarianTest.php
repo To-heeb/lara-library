@@ -1247,7 +1247,7 @@ class LibrarianTest extends TestCase
 
         $payload = [
             "user_id" => $this->user->id,
-            "return_date" =>  "2023-02-28",
+            "return_date" =>  "2023-03-05",
             "book_id" => $book->id,
         ];
 
@@ -1320,17 +1320,17 @@ class LibrarianTest extends TestCase
         $book_issue = BookIssue::factory()->create([
             'library_id' => $library_id,
             "user_id" => $this->user->id,
-            "return_date" =>  "2023-02-28",
+            "return_date" =>  "2023-03-05",
             "book_id" => $book->id,
         ]);
 
         $payload = [
             "user_id" => $this->user->id,
-            "return_date" =>  "2023-02-28",
+            "return_date" =>  "2023-03-10",
             "book_id" => $book->id,
         ];
 
-        $url =  $this->base_url . "/api/v1/librarian/bookissues/$book_issue->id/extend";
+        $url =  $this->base_url . "/api/v1/librarian/bookissues_extend/$book_issue->id";
         //dd([$url]);
 
         $this->actingAs($this->user, 'sanctum')
@@ -1395,23 +1395,23 @@ class LibrarianTest extends TestCase
         $this->assertDatabaseHas(BookIssue::class, ['return_date' => $payload['return_date']]);
     }
 
-    public function test_librarian_cannot_extend_a_bookissue_from_another_library()
-    {
-    }
+    // public function test_librarian_cannot_extend_a_bookissue_from_another_library()
+    // {
+    // }
 
-    public function test_librarian_can_return_a_bookissue()
-    {
-    }
+    // public function test_librarian_can_return_a_bookissue()
+    // {
+    // }
 
-    public function test_librarian_can_delete_a_bookissue()
-    {
-    }
+    // public function test_librarian_can_delete_a_bookissue()
+    // {
+    // }
 
-    public function test_librarian_can_fetch_a_bookissue()
-    {
-    }
+    // public function test_librarian_can_fetch_a_bookissue()
+    // {
+    // }
 
-    public function test_librarian_can_fetch_all_bookissues()
-    {
-    }
+    // public function test_librarian_can_fetch_all_bookissues()
+    // {
+    // }
 }
