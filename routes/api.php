@@ -88,14 +88,14 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
                     'middleware' => 'role:user'
                 ],
                 function () {
-                    Route::resource('/authors', AuthorController::class)->only(['index', 'show']);
-                    Route::resource('/books', BookController::class)->only(['index', 'show']);
-                    Route::resource('/publishers', PublisherController::class)->only(['index', 'show']);
-                    Route::resource('/categories', CategoryController::class)->only(['index', 'show']);
+                    Route::apiResource('/authors', AuthorController::class)->only(['index', 'show']);
+                    Route::apiResource('/books', BookController::class)->only(['index', 'show']);
+                    Route::apiResource('/publishers', PublisherController::class)->only(['index', 'show']);
+                    Route::apiResource('/categories', CategoryController::class)->only(['index', 'show']);
                     Route::get('/libraries/{library}', [LibraryController::class, 'show']);
-                    Route::resource('/bookissues', BookIssueController::class)->only(['store', 'show']);
-                    Route::put('/bookissues/{bookissue}/extend', [BookIssueController::class, 'extendBook']);
-                    Route::put('/bookissues/{bookissue}/return', [BookIssueController::class, 'returnBook']);
+                    Route::apiResource('/bookissues', BookIssueController::class)->only(['store', 'show']);
+                    Route::put('/bookissues_extend/{bookissue}', [BookIssueExtendController::class, 'update']);
+                    Route::put('/bookissues_return/{bookissue}', [BookIssueReturnController::class, 'update']);
                     Route::resource('/users', UserController::class)->only(['show', 'update', 'destroy']);
                 }
             );
