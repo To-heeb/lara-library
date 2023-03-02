@@ -1330,7 +1330,7 @@ class LibrarianTest extends TestCase
             "book_id" => $book->id,
         ];
 
-        $url =  $this->base_url . "/api/v1/librarian/bookissues_extend/$book_issue->id";
+        $url =  $this->base_url . "/api/v1/librarian/bookissues/$book_issue->id/extend";
         //dd([$url]);
 
         $this->actingAs($this->user, 'sanctum')
@@ -1395,23 +1395,357 @@ class LibrarianTest extends TestCase
         $this->assertDatabaseHas(BookIssue::class, ['return_date' => $payload['return_date']]);
     }
 
-    // public function test_librarian_cannot_extend_a_bookissue_from_another_library()
-    // {
-    // }
+    public function test_librarian_cannot_extend_a_bookissue_from_another_library()
+    {
+        $new_library = Library::factory()->create(['subdomain' => 'ikeja']);
+        $library_id = $new_library->id;
 
-    // public function test_librarian_can_return_a_bookissue()
-    // {
-    // }
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
+
+        $book = Book::factory()->create([
+            'library_id' => $library_id,
+            "publisher_id" => $publisher->id,
+            "category_id" => $category->id,
+            "author_id" => $author->id,
+            "available_copies" => 10,
+            "total_copies" => 10,
+            "isbn" => $this->faker->phoneNumber,
+            "published_year" => $this->faker->year,
+            "edition" => '2nd',
+        ]);
+
+        $book_issue = BookIssue::factory()->create([
+            'library_id' => $library_id,
+            "user_id" => $this->user->id,
+            "return_date" =>  "2023-03-05",
+            "book_id" => $book->id,
+        ]);
+
+        $payload = [
+            "user_id" => $this->user->id,
+            "return_date" =>  "2023-03-10",
+            "book_id" => $book->id,
+        ];
+
+        $url =  $this->base_url . "/api/v1/librarian/bookissues/$book_issue->id/extend";
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('put', $url, $payload, $this->header)
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function test_librarian_can_return_a_bookissue()
+    {
+        $library_id = $this->library->id;
+
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
+
+        $book = Book::factory()->create([
+            'library_id' => $library_id,
+            "publisher_id" => $publisher->id,
+            "category_id" => $category->id,
+            "author_id" => $author->id,
+            "available_copies" => 10,
+            "total_copies" => 10,
+            "isbn" => $this->faker->phoneNumber,
+            "published_year" => $this->faker->year,
+            "edition" => '2nd',
+        ]);
+
+        $book_issue = BookIssue::factory()->create([
+            'library_id' => $library_id,
+            "user_id" => $this->user->id,
+            "return_date" =>  "2023-03-05",
+            "book_id" => $book->id,
+        ]);
+
+        $payload = [
+            "user_id" => $this->user->id,
+            "book_id" => $book->id,
+        ];
+
+        $url =  $this->base_url . "/api/v1/librarian/bookissues/$book_issue->id/return";
+        //dd([$url]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('put', $url, $payload, $this->header)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "status",
+                    "message",
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            'issue_date',
+                            'return_date',
+                            'due_date',
+                            'status',
+                            'extention_num',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                            'book_id',
+                            'book_name',
+                            'book_author' => [
+                                "id",
+                                "library_id",
+                                "name",
+                                "created_at",
+                                "updated_at"
+                            ],
+                            'book_category' => [
+                                "id",
+                                "name",
+                                "library_id",
+                                "created_at",
+                                "updated_at"
+                            ],
+                            'book_publisher' => [
+                                "id",
+                                "name",
+                                "library_id",
+                                "created_at",
+                                "updated_at"
+                            ],
+                            'total_copies',
+                            'available_copies',
+                            'published_year',
+                            'isbn',
+                            'edition',
+                        ]
+                    ]
+                ]
+            );
+
+        $this->assertDatabaseHas(BookIssue::class, ['status' => 'returned']);
+        $this->assertDatabaseHas(Book::class, ['total_copies' => $book['total_copies']]);
+    }
 
     // public function test_librarian_can_delete_a_bookissue()
     // {
+    //     $library_id = $this->library->id;
+
+    //     $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+    //     $category = Category::factory()->create(['library_id' => $library_id]);
+    //     $author = Author::factory()->create(['library_id' => $library_id]);
+
+    //     $book = Book::factory()->create([
+    //         'library_id' => $library_id,
+    //         "publisher_id" => $publisher->id,
+    //         "category_id" => $category->id,
+    //         "author_id" => $author->id,
+    //         "available_copies" => 10,
+    //         "total_copies" => 10,
+    //         "isbn" => $this->faker->phoneNumber,
+    //         "published_year" => $this->faker->year,
+    //         "edition" => '2nd',
+    //     ]);
+
+    //     $book_issue = BookIssue::factory()->create([
+    //         'library_id' => $library_id,
+    //         "user_id" => $this->user->id,
+    //         "return_date" =>  "2023-03-05",
+    //         "book_id" => $book->id,
+    //     ]);
+
+    //     $url =  $this->base_url . "/api/v1/librarian/bookissues/$book_issue->id";
+    //     //dd([$url]);
+
+    //     $this->actingAs($this->user, 'sanctum')
+    //         ->json('delete', $url, [], $this->header)
+    //         ->assertStatus(Response::HTTP_NO_CONTENT);
     // }
 
-    // public function test_librarian_can_fetch_a_bookissue()
-    // {
-    // }
+    public function test_librarian_can_fetch_a_bookissue()
+    {
+        $library_id = $this->library->id;
 
-    // public function test_librarian_can_fetch_all_bookissues()
-    // {
-    // }
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
+
+        $book = Book::factory()->create([
+            'library_id' => $library_id,
+            "publisher_id" => $publisher->id,
+            "category_id" => $category->id,
+            "author_id" => $author->id,
+            "available_copies" => 10,
+            "total_copies" => 10,
+            "isbn" => $this->faker->phoneNumber,
+            "published_year" => $this->faker->year,
+            "edition" => '2nd',
+        ]);
+
+        $book_issue = BookIssue::factory()->create([
+            'library_id' => $library_id,
+            "user_id" => $this->user->id,
+            "return_date" =>  "2023-03-05",
+            "book_id" => $book->id,
+        ]);
+
+
+        $url =  $this->base_url . "/api/v1/librarian/bookissues/$book_issue->id";
+        //dd([$url]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('get', $url, [], $this->header)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            'issue_date',
+                            'return_date',
+                            'due_date',
+                            'status',
+                            'extention_num',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                            'book_id',
+                            'book_name',
+                            'book_author' => [
+                                "id",
+                                "library_id",
+                                "name",
+                                "created_at",
+                                "updated_at"
+                            ],
+                            'book_category' => [
+                                "id",
+                                "name",
+                                "library_id",
+                                "created_at",
+                                "updated_at"
+                            ],
+                            'book_publisher' => [
+                                "id",
+                                "name",
+                                "library_id",
+                                "created_at",
+                                "updated_at"
+                            ],
+                            'total_copies',
+                            'available_copies',
+                            'published_year',
+                            'isbn',
+                            'edition',
+                        ]
+                    ]
+                ]
+            );
+    }
+
+    public function test_librarian_can_fetch_all_bookissues()
+    {
+        $library_id = $this->library->id;
+
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
+
+        $book = Book::factory()->create([
+            'library_id' => $library_id,
+            "publisher_id" => $publisher->id,
+            "category_id" => $category->id,
+            "author_id" => $author->id,
+            "available_copies" => 10,
+            "total_copies" => 10,
+            "isbn" => $this->faker->phoneNumber,
+            "published_year" => $this->faker->year,
+            "edition" => '2nd',
+        ]);
+
+        $book_issue = BookIssue::factory(5)->create([
+            'library_id' => $library_id,
+            "user_id" => $this->user->id,
+            "return_date" =>  "2023-03-05",
+            "book_id" => $book->id,
+        ]);
+
+
+        $url =  $this->base_url . "/api/v1/librarian/bookissues";
+        //dd([$url]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->json('get', $url, [], $this->header)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        [
+                            'id',
+                            "attributes" => [
+                                'issue_date',
+                                'return_date',
+                                'due_date',
+                                'status',
+                                'extention_num',
+                                'created_at',
+                                'updated_at',
+                            ],
+                            'relationships' => [
+                                'library_id',
+                                'library_name',
+                                'library_address',
+                                'library_email',
+                                'library_phone_number',
+                                'book_issue_duration_in_days',
+                                'max_issue_extentions',
+                                'book_id',
+                                'book_name',
+                                'book_author' => [
+                                    "id",
+                                    "library_id",
+                                    "name",
+                                    "created_at",
+                                    "updated_at"
+                                ],
+                                'book_category' => [
+                                    "id",
+                                    "name",
+                                    "library_id",
+                                    "created_at",
+                                    "updated_at"
+                                ],
+                                'book_publisher' => [
+                                    "id",
+                                    "name",
+                                    "library_id",
+                                    "created_at",
+                                    "updated_at"
+                                ],
+                                'total_copies',
+                                'available_copies',
+                                'published_year',
+                                'isbn',
+                                'edition',
+                            ]
+                        ]
+                    ]
+                ]
+            );
+    }
 }

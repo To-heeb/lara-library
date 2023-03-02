@@ -94,8 +94,8 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
                     Route::apiResource('/categories', CategoryController::class)->only(['index', 'show']);
                     Route::get('/libraries/{library}', [LibraryController::class, 'show']);
                     Route::apiResource('/bookissues', BookIssueController::class)->only(['store', 'show']);
-                    Route::put('/bookissues_extend/{bookissue}', [BookIssueExtendController::class, 'update']);
-                    Route::put('/bookissues_return/{bookissue}', [BookIssueReturnController::class, 'update']);
+                    Route::put('/bookissues/{bookissue}/extend', [BookIssueExtendController::class, 'update']);
+                    Route::put('/bookissues/{bookissue}/return', [BookIssueReturnController::class, 'update']);
                     Route::resource('/users', UserController::class)->only(['show', 'update', 'destroy']);
                 }
             );
@@ -115,8 +115,8 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
                     'bookissues' => BookIssueController::class,
                 ]);
 
-                Route::put('/bookissues_extend/{bookissue}', [BookIssueExtendController::class, 'update']);
-                Route::put('/bookissues_return/{bookissue}', [BookIssueReturnController::class, 'update']);
+                Route::put('/bookissues/{bookissue}/extend', [BookIssueExtendController::class, 'update']);
+                Route::put('/bookissues/{bookissue}/return', [BookIssueReturnController::class, 'update']);
                 Route::resource('/users', UserController::class)->only(['index', 'update', 'show']);
                 //Route::delete('/users/{user}', [UserController::class, 'destroy']);
             });

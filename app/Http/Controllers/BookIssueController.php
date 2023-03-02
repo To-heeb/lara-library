@@ -136,77 +136,11 @@ class BookIssueController extends Controller
 
 
     /**
-     * @param ReturnBookIssueRequest $request
-     * 
-     * @param integer $id
-     * @param BookIssue $bookissue
-     * @return void
-     * 
-     */
-    public function returnBook(ReturnBookIssueRequest $request, $id, BookIssue $bookissue)
-    {
-        $result = $this->validateLibrary($bookissue);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
-
-        $book_issue_info = $request->validated($request->all());
-        $pending_book = $this->validateBook($book_issue_info);
-
-        if (!$pending_book) return $this->error([], "You don't have a pending issue on this book, you can't return an issue on it", 401);
-
-        $book_issue_info["status"] = 'returned';
-        $bookissue->update($book_issue_info);
-
-        Book::updateBookCopies($book_issue_info['book_id'], "increase");
-
-        $book_resource = new BookIssueResource($bookissue);
-        return $this->success($book_resource, "Book issue successfully returned, thank you.");
-    }
-
-
-
-    /**
-     * @param ExtendBookIssueRequest $request
-     * 
-     * @param integer $id
-     * @param BookIssue $bookissue
-     * @return void
-     * 
-     */
-    public function extendBook(ExtendBookIssueRequest $request, $id, BookIssue $bookissue)
-    {
-        $result = $this->validateLibrary($bookissue);
-        //dd("I got here");
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
-
-        $book_issue_info = $request->validated($request->all());
-
-        //check if user have pending issue with the same book
-        $pending_book = $this->validateBook($book_issue_info);
-
-        if (!$pending_book) return $this->error([], "You don't have a pending issue on this book, you can't extend an issue on it", 401);
-
-        $library_info = Library::getLibraryDetails();
-
-        // check for max extention
-        if ($pending_book["extention_num"] >=  $library_info->max_issue_extentions) return $this->error([], "You have exceeded the number of extentions allowed", 401);
-
-        $addedDays = intval($library_info->book_issue_duration_in_days);
-        $due_date =  date('Y-m-d', strtotime($pending_book->due_date . " +  $addedDays days"));
-        $book_issue_info["due_date"] = $due_date;
-        $book_issue_info["extention_num"] = $pending_book["extention_num"] + 1;
-        $bookissue->update($book_issue_info);
-
-        $book_resource = new BookIssueResource($bookissue);
-        return $this->success($book_resource, "Book issue successfully extended.");
-    }
-
-
-    /**
      * @param array $book_issue_info
      * 
      * @return BookIssue 
      */
-    public function validateBook($book_issue_info): ?Object
+    private function validateBook($book_issue_info): ?Object
     {
 
         $pending_book = BookIssue::where([
