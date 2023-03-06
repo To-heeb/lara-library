@@ -48,7 +48,6 @@ class Book extends Model
             $book->available_copies = $book->available_copies + 1;
         }
 
-
         $book->save();
     }
 

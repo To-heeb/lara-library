@@ -108,7 +108,6 @@ class BookIssueController extends Controller
             }
         }
 
-        //
         $request->validated($request->all());
 
         $bookissue->update($request->all());
@@ -122,13 +121,14 @@ class BookIssueController extends Controller
      * @param  \App\Models\BookIssue  $bookIssue
      * @return \Illuminate\Http\Response
      */
-    public function destroy(BookIssue $bookIssue)
+    public function destroy(BookIssue $bookissue)
     {
         //
-        $result = $this->validateLibrary($bookIssue);
+        dd([$bookissue->library_id, Auth::user()->library_id]);
+        $result = $this->validateLibrary($bookissue);
         if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
 
-        $bookIssue->delete();
+        $bookissue->delete();
 
         $message = "BookIssue successfully deleted";
         return $this->success([], $message);

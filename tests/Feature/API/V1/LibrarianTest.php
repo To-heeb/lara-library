@@ -1222,8 +1222,6 @@ class LibrarianTest extends TestCase
     }
 
 
-    // TODOS
-    //-book issue for users in the same library
     public function test_librarian_can_create_a_bookissue()
     {
 
@@ -1247,7 +1245,7 @@ class LibrarianTest extends TestCase
 
         $payload = [
             "user_id" => $this->user->id,
-            "return_date" =>  "2023-03-05",
+            "return_date" =>  "2023-03-09",
             "book_id" => $book->id,
         ];
 
@@ -1534,40 +1532,40 @@ class LibrarianTest extends TestCase
         $this->assertDatabaseHas(Book::class, ['total_copies' => $book['total_copies']]);
     }
 
-    // public function test_librarian_can_delete_a_bookissue()
-    // {
-    //     $library_id = $this->library->id;
+    public function test_librarian_can_delete_a_bookissue()
+    {
+        $library_id = $this->library->id;
 
-    //     $publisher = Publisher::factory()->create(['library_id' => $library_id]);
-    //     $category = Category::factory()->create(['library_id' => $library_id]);
-    //     $author = Author::factory()->create(['library_id' => $library_id]);
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
 
-    //     $book = Book::factory()->create([
-    //         'library_id' => $library_id,
-    //         "publisher_id" => $publisher->id,
-    //         "category_id" => $category->id,
-    //         "author_id" => $author->id,
-    //         "available_copies" => 10,
-    //         "total_copies" => 10,
-    //         "isbn" => $this->faker->phoneNumber,
-    //         "published_year" => $this->faker->year,
-    //         "edition" => '2nd',
-    //     ]);
+        $book = Book::factory()->create([
+            'library_id' => $library_id,
+            "publisher_id" => $publisher->id,
+            "category_id" => $category->id,
+            "author_id" => $author->id,
+            "available_copies" => 10,
+            "total_copies" => 10,
+            "isbn" => $this->faker->phoneNumber,
+            "published_year" => $this->faker->year,
+            "edition" => '2nd',
+        ]);
 
-    //     $book_issue = BookIssue::factory()->create([
-    //         'library_id' => $library_id,
-    //         "user_id" => $this->user->id,
-    //         "return_date" =>  "2023-03-05",
-    //         "book_id" => $book->id,
-    //     ]);
+        $book_issue = BookIssue::factory()->create([
+            'library_id' => $library_id,
+            "user_id" => $this->user->id,
+            "return_date" =>  "2023-03-10",
+            "book_id" => $book->id,
+        ]);
 
-    //     $url =  $this->base_url . "/api/v1/librarian/bookissues/$book_issue->id";
-    //     //dd([$url]);
+        $url =  $this->base_url . "/api/v1/librarian/bookissues/$book_issue->id";
+        //dd([$url]);
 
-    //     $this->actingAs($this->user, 'sanctum')
-    //         ->json('delete', $url, [], $this->header)
-    //         ->assertStatus(Response::HTTP_NO_CONTENT);
-    // }
+        $response = $this->actingAs($this->user, 'sanctum')
+            ->json('delete', $url, [], $this->header)
+            ->assertStatus(Response::HTTP_NO_CONTENT);
+    }
 
     public function test_librarian_can_fetch_a_bookissue()
     {

@@ -37,7 +37,7 @@ trait MultitenacyScopeFilter
                 });
 
                 static::updating(function ($model) {
-                    dd([Auth::user()->library_id, auth('sanctum')->user()->library_id]);
+                    //dd([Auth::user()->library_id, auth('sanctum')->user()->library_id]);
                     if (auth('sanctum')->user()->library_id != $model->library_id) {
                         return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
                     }
