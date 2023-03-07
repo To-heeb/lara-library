@@ -36,11 +36,7 @@ class LibraryController extends Controller
      */
     public function store(StoreLibraryRequest $request)
     {
-        //
-
-        $library_info = $request->validated($request->all());
-
-        $library = Library::create($library_info);
+        $library = Library::create($request->validated());
 
         if (Auth::user()->library_id == 0) {
 
@@ -59,10 +55,6 @@ class LibraryController extends Controller
      */
     public function show($id, Library $library)
     {
-        //
-
-        //$library = Library::find($id);
-
         return new LibraryResource($library);
     }
 

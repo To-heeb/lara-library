@@ -11,9 +11,9 @@ class AdminTest extends TestCase
     /**
      * A basic feature test example.
      *
-     * @return void
+     * @test
      */
-    public function test_example()
+    public function example()
     {
         $response = $this->get('/');
 

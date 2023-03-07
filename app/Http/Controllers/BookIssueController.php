@@ -27,7 +27,6 @@ class BookIssueController extends Controller
      */
     public function index()
     {
-        //
         return BookIssueResource::collection(BookIssue::all());
     }
 

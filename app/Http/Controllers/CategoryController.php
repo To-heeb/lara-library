@@ -23,7 +23,6 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
         return CategoryResource::collection(Category::all());
     }
 
@@ -35,10 +34,7 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        //
-        $category_info = $request->validated($request->all());
-
-        $category = Category::create($category_info);
+        $category = Category::create($request->validated());
 
         return new CategoryResource($category);
     }
@@ -51,7 +47,6 @@ class CategoryController extends Controller
      */
     public function show($id, Category $category)
     {
-        //
         $result = $this->validateLibrary($category);
         if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
 
