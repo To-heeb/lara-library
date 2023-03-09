@@ -1221,7 +1221,6 @@ class LibrarianTest extends TestCase
             );
     }
 
-
     public function test_librarian_can_create_a_bookissue()
     {
 
@@ -1318,7 +1317,7 @@ class LibrarianTest extends TestCase
         $book_issue = BookIssue::factory()->create([
             'library_id' => $library_id,
             "user_id" => $this->user->id,
-            "return_date" =>  "2023-03-05",
+            "return_date" =>  "2023-03-011",
             "book_id" => $book->id,
         ]);
 
@@ -1417,13 +1416,13 @@ class LibrarianTest extends TestCase
         $book_issue = BookIssue::factory()->create([
             'library_id' => $library_id,
             "user_id" => $this->user->id,
-            "return_date" =>  "2023-03-05",
+            "return_date" =>  date('Y-m-d', strtotime("1 days")),
             "book_id" => $book->id,
         ]);
 
         $payload = [
             "user_id" => $this->user->id,
-            "return_date" =>  "2023-03-10",
+            "return_date" =>  date('Y-m-d', strtotime("2 days")),
             "book_id" => $book->id,
         ];
 
@@ -1457,7 +1456,7 @@ class LibrarianTest extends TestCase
         $book_issue = BookIssue::factory()->create([
             'library_id' => $library_id,
             "user_id" => $this->user->id,
-            "return_date" =>  "2023-03-05",
+            "return_date" =>  date('Y-m-d', strtotime("2 days")),
             "book_id" => $book->id,
         ]);
 
@@ -1555,7 +1554,7 @@ class LibrarianTest extends TestCase
         $book_issue = BookIssue::factory()->create([
             'library_id' => $library_id,
             "user_id" => $this->user->id,
-            "return_date" =>  "2023-03-10",
+            "return_date" =>  date('Y-m-d', strtotime("2 days")),
             "book_id" => $book->id,
         ]);
 
@@ -1746,4 +1745,7 @@ class LibrarianTest extends TestCase
                 ]
             );
     }
+
+    // test books can't be extented beyond library limit 
+
 }

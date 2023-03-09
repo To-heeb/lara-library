@@ -29,7 +29,7 @@ class BookIssueExtendController extends Controller
         //dd("I got here");
         if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
 
-        $book_issue_info = $request->validated($request->all());
+        $book_issue_info = $request->validated();
 
         //check if user have pending issue with the same book
         $pending_book = $this->validateBook($book_issue_info);
