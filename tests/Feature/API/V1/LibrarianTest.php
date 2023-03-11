@@ -1244,7 +1244,7 @@ class LibrarianTest extends TestCase
 
         $payload = [
             "user_id" => $this->user->id,
-            "return_date" =>  "2023-03-09",
+            "return_date" =>  date('Y-m-d', strtotime("2 days")),
             "book_id" => $book->id,
         ];
 
@@ -1317,13 +1317,13 @@ class LibrarianTest extends TestCase
         $book_issue = BookIssue::factory()->create([
             'library_id' => $library_id,
             "user_id" => $this->user->id,
-            "return_date" =>  "2023-03-011",
+            "return_date" =>  date('Y-m-d', strtotime("2 days")),
             "book_id" => $book->id,
         ]);
 
         $payload = [
             "user_id" => $this->user->id,
-            "return_date" =>  "2023-03-10",
+            "return_date" =>  date('Y-m-d', strtotime("4 days")),
             "book_id" => $book->id,
         ];
 
@@ -1465,7 +1465,7 @@ class LibrarianTest extends TestCase
             "book_id" => $book->id,
         ];
 
-        $url =  $this->base_url . "/api/v1/librarian/bookissues/$book_issue->id/return";
+        $url =  $this->base_url . "/api/v1/librarian/bookissues/$book_issue->id/extend";
         //dd([$url]);
 
         $this->actingAs($this->user, 'sanctum')
@@ -1747,5 +1747,51 @@ class LibrarianTest extends TestCase
     }
 
     // test books can't be extented beyond library limit 
+    // public function test_books_cannot_be_extended_beyond_library_limit()
+    // {
 
+    //     $library_id = $this->library->id;
+
+    //     $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+    //     $category = Category::factory()->create(['library_id' => $library_id]);
+    //     $author = Author::factory()->create(['library_id' => $library_id]);
+
+    //     $book = Book::factory()->create([
+    //         'library_id' => $library_id,
+    //         "publisher_id" => $publisher->id,
+    //         "category_id" => $category->id,
+    //         "author_id" => $author->id,
+    //         "available_copies" => 10,
+    //         "total_copies" => 10,
+    //         "isbn" => $this->faker->phoneNumber,
+    //         "published_year" => $this->faker->year,
+    //         "edition" => '2nd',
+    //     ]);
+
+    //     $book_issue = BookIssue::factory()->create([
+    //         'library_id' => $library_id,
+    //         "user_id" => $this->user->id,
+    //         "return_date" =>  date('Y-m-d', strtotime("2 days")),
+    //         "book_id" => $book->id,
+    //     ]);
+
+    //     $length = $this->library->max_issue_extentions;
+
+    //     for ($i = 0; $i < $length; $i++) {
+    //         # code...
+    //     }
+
+    //     $payload = [
+    //         "user_id" => $this->user->id,
+    //         "return_date" =>  date('Y-m-d', strtotime("4 days")),
+    //         "book_id" => $book->id,
+    //     ];
+
+    //     $url =  $this->base_url . "/api/v1/librarian/bookissues/$book_issue->id/extend";
+    //     //dd([$url]);
+
+    //     $this->actingAs($this->user, 'sanctum')
+    //         ->json('put', $url, $payload, $this->header)
+    //         ->assertStatus(Response::HTTP_OK);
+    // }
 }
