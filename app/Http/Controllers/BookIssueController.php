@@ -69,6 +69,7 @@ class BookIssueController extends Controller
     /**
      * Display the specified resource.
      *
+     * @id
      * @param  \App\Models\BookIssue  $bookissue
      * @return \Illuminate\Http\Response
      */
@@ -91,7 +92,7 @@ class BookIssueController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\UpdateBookIssueRequest  $request
      * @param  \App\Models\BookIssue  $bookIssue
      * @return \Illuminate\Http\Response
      */
@@ -107,9 +108,7 @@ class BookIssueController extends Controller
             }
         }
 
-        $request->validated($request->all());
-
-        $bookissue->update($request->all());
+        $bookissue->update($request->validated());
 
         return new BookIssueResource($bookissue);
     }
@@ -117,6 +116,7 @@ class BookIssueController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @id
      * @param  \App\Models\BookIssue  $bookIssue
      * @return \Illuminate\Http\Response
      */

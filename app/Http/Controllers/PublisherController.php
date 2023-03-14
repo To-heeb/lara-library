@@ -49,9 +49,7 @@ class PublisherController extends Controller
     public function store(StorePublisherRequest $request)
     {
         //
-        $publisher_info = $request->validated($request->all());
-
-        $publisher = Publisher::create($publisher_info);
+        $publisher = Publisher::create($request->validated());
 
         return new PublisherResource($publisher);
     }
@@ -84,9 +82,7 @@ class PublisherController extends Controller
         $result = $this->validateLibrary($publisher);
         if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
 
-        $request->validated($request->all());
-
-        $publisher->update($request->all());
+        $publisher->update($request->validated());
 
         return new PublisherResource($publisher);
     }

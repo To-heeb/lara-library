@@ -66,9 +66,7 @@ class CategoryController extends Controller
         $result = $this->validateLibrary($category);
         if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
 
-        $request->validated($request->all());
-
-        $category->update($request->all());
+        $category->update($request->validated());
 
         return new CategoryResource($category);
     }

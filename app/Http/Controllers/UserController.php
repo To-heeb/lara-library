@@ -30,26 +30,6 @@ class UserController extends Controller
         return UserResource::collection(User::all());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
@@ -63,17 +43,6 @@ class UserController extends Controller
         $result = $this->validateLibrary($user);
         if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
         return $this->isNotAuthorized($user) ? $this->isNotAuthorized($user) : new UserResource($user);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -92,9 +61,7 @@ class UserController extends Controller
             }
         }
 
-        $request->validated($request->all());
-
-        User::updateUser((object) $request->all());
+        User::updateUser((object) $request->validated());
         $user = User::find($user->id);
 
         return new UserResource($user);

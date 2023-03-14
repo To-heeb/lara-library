@@ -65,9 +65,7 @@ class BookController extends Controller
         $result = $this->validateLibrary($book);
         if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
 
-        $request->validated($request->all());
-
-        $book->update($request->all());
+        $book->update($request->validated());
 
         return new BookResource($book);
     }

@@ -72,9 +72,8 @@ class LibraryController extends Controller
         if (Auth::user()->library_id != $library->id) {
             return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
         }
-        $request->validated($request->all());
 
-        $library->update($request->all());
+        $library->update($request->validated());
 
         return new LibraryResource($library);
     }

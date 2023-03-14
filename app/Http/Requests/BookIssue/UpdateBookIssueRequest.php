@@ -25,7 +25,8 @@ class UpdateBookIssueRequest extends FormRequest
     {
         return [
             //
-
+            'user_id' => 'required|integer|exists:users,id',
+            'book_id' => 'required|integer|exists:books,id',
         ];
     }
 }
