@@ -31,6 +31,7 @@ class BookIssuePolicy
     public function view(User $user, BookIssue $bookIssue)
     {
         //
+
     }
 
     /**
@@ -42,6 +43,7 @@ class BookIssuePolicy
     public function create(User $user)
     {
         //
+
     }
 
     /**
@@ -53,7 +55,7 @@ class BookIssuePolicy
      */
     public function update(User $user, BookIssue $bookIssue)
     {
-        //
+        return ($user->library_id === $bookIssue->library_id && $user->role === 'librarian') || (auth()->check() && $bookIssue->user_id == auth()->id());
     }
 
     /**
@@ -65,7 +67,7 @@ class BookIssuePolicy
      */
     public function delete(User $user, BookIssue $bookIssue)
     {
-        //
+        return ($user->library_id === $bookIssue->library_id && $user->role === 'librarian') || (auth()->check() && $bookIssue->user_id == auth()->id());
     }
 
     /**

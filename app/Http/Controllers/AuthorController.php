@@ -24,7 +24,6 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        //
         return AuthorResource::collection(Author::all());
     }
 
@@ -50,9 +49,8 @@ class AuthorController extends Controller
     public function show($id, Author $author)
     {
         //
-        $result = $this->validateLibrary($author);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
-        //dd($author);
+        $this->authorize('view', Author::class);
+
         return new AuthorResource($author);
     }
 
@@ -65,10 +63,6 @@ class AuthorController extends Controller
      */
     public function update(UpdateAuthorRequest $request, $id, Author $author)
     {
-        //
-        $result = $this->validateLibrary($author);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
-
         $author->update($request->validated());
 
         return new AuthorResource($author);
@@ -82,9 +76,7 @@ class AuthorController extends Controller
      */
     public function destroy($id, Author $author)
     {
-        //
-        $result = $this->validateLibrary($author);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+        $this->authorize('delete', Author::class);
 
         $author->delete();
 

@@ -256,7 +256,6 @@ class LibrarianTest extends TestCase
 
     public function test_librarian_can_fetch_an_author_in_it_library()
     {
-
         $author = Author::factory()->create(['library_id' => $this->library->id]);
         $author_id = $author->id;
         $url =  $this->base_url . "/api/v1/librarian/authors/$author_id";

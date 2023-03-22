@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Author;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreAuthorRequest extends FormRequest
@@ -13,7 +14,7 @@ class StoreAuthorRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Gate::allows('create', Author::class);
     }
 
     /**

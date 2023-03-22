@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Author;
 
+use App\Models\Author;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateAuthorRequest extends FormRequest
@@ -13,7 +15,7 @@ class UpdateAuthorRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Gate::allows('update', Author::class);
     }
 
     /**
