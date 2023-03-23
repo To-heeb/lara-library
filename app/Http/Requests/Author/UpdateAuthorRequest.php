@@ -15,7 +15,7 @@ class UpdateAuthorRequest extends FormRequest
      */
     public function authorize()
     {
-        return Gate::allows('update', Author::class);
+        return true;
     }
 
     /**

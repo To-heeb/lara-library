@@ -30,7 +30,7 @@ class AuthorPolicy
      */
     public function view(User $user, Author $author)
     {
-        return $user->library_id == $author->library_id || $user->role == 'admin';
+        return $user->library_id === $author->library_id || $user->role === 'admin';
     }
 
     /**
@@ -53,7 +53,7 @@ class AuthorPolicy
      */
     public function update(User $user, Author $author)
     {
-        return $user->library_id == $author->library_id && $user->role === 'librarian';
+        return $user->library_id === $author->library_id && $user->role === 'librarian';
     }
 
     /**

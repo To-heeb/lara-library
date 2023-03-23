@@ -48,8 +48,7 @@ class AuthorController extends Controller
      */
     public function show($id, Author $author)
     {
-        //
-        $this->authorize('view', Author::class);
+        $this->authorize('view', $author);
 
         return new AuthorResource($author);
     }
@@ -63,6 +62,8 @@ class AuthorController extends Controller
      */
     public function update(UpdateAuthorRequest $request, $id, Author $author)
     {
+        $this->authorize('update', $author);
+
         $author->update($request->validated());
 
         return new AuthorResource($author);
@@ -76,7 +77,7 @@ class AuthorController extends Controller
      */
     public function destroy($id, Author $author)
     {
-        $this->authorize('delete', Author::class);
+        $this->authorize('delete', $author);
 
         $author->delete();
 
