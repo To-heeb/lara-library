@@ -35,7 +35,6 @@ class PublisherController extends Controller
      */
     public function index()
     {
-        //
         return PublisherResource::collection(Publisher::all());
     }
 
@@ -48,7 +47,6 @@ class PublisherController extends Controller
      */
     public function store(StorePublisherRequest $request)
     {
-        //
         $publisher = Publisher::create($request->validated());
 
         return new PublisherResource($publisher);
@@ -62,9 +60,7 @@ class PublisherController extends Controller
      */
     public function show($id, Publisher $publisher)
     {
-        //
-        // $result = $this->validateLibrary($publisher);
-        // if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+        $this->authorize('view', $publisher);
 
         return new PublisherResource($publisher);
     }
@@ -78,9 +74,7 @@ class PublisherController extends Controller
      */
     public function update(UpdatePublisherRequest $request, $id, Publisher $publisher)
     {
-        //
-        $result = $this->validateLibrary($publisher);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+        $this->authorize('update', $publisher);
 
         $publisher->update($request->validated());
 
@@ -95,9 +89,7 @@ class PublisherController extends Controller
      */
     public function destroy($id, Publisher $publisher)
     {
-        //
-        $result = $this->validateLibrary($publisher);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+        $this->authorize('delete', $publisher);
 
         $publisher->delete();
 

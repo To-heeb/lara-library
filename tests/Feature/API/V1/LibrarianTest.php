@@ -574,7 +574,7 @@ class LibrarianTest extends TestCase
 
         $this->actingAs($this->user, 'sanctum')
             ->json('get', $url, [], $this->header)
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+            ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     public function test_librarian_can_fetch_all_categories_in_it_library()
@@ -707,7 +707,7 @@ class LibrarianTest extends TestCase
 
         $this->actingAs($this->user, 'sanctum')
             ->json('delete', $url, [], $this->header)
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+            ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->assertDatabaseHas(Publisher::class, ['name' => $publisher->name]);
     }
@@ -895,7 +895,7 @@ class LibrarianTest extends TestCase
 
         $this->actingAs($this->user, 'sanctum')
             ->json('get', $url, [], $this->header)
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+            ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     public function test_librarian_can_add_a_book()
@@ -1076,7 +1076,7 @@ class LibrarianTest extends TestCase
 
         $this->actingAs($this->user, 'sanctum')
             ->json('put', $url, $payload, $this->header)
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+            ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->assertDatabaseMissing(Book::class, ['name' => $payload["name"]]);
     }

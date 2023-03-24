@@ -26,7 +26,6 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
         return UserResource::collection(User::all());
     }
 
@@ -39,10 +38,9 @@ class UserController extends Controller
      */
     public function show($id, User $user)
     {
-        //
-        $result = $this->validateLibrary($user);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
-        return $this->isNotAuthorized($user) ? $this->isNotAuthorized($user) : new UserResource($user);
+        $this->authorize('view', $user);
+
+        return new UserResource($user);
     }
 
     /**
@@ -54,12 +52,7 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, $id, User $user)
     {
-        //
-        if (Auth::user()->role == "librarian") {
-            if (Auth::user()->id != $user->id) {
-                return $this->error('', "You are not authorized to make this request", 403);
-            }
-        }
+        $this->authorize('update', $user);
 
         User::updateUser((object) $request->validated());
         $user = User::find($user->id);
@@ -75,22 +68,8 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
-        if (Auth::user()->role == "admin" || Auth::user()->role == "librarian") {
-
-            $role = ucfirst(Auth::user()->role) . 's';
-
-            return $this->error(null, "$role are not allowed to delete account", 403);
-        }
-        return $this->isNotAuthorized($user) ? $this->isNotAuthorized($user) : $user->delete();
-    }
-
-    private function isNotAuthorized($user)
-    {
-        if (Auth::user()->role == "user") {
-            if (Auth::user()->id != $user->id) {
-                return $this->error('', "You are not authorized to make this request", 403);
-            }
-        }
+        $this->authorize('delete', $user);
+        $user->delete();
+        return $this->success([], "User Account successfully deleted", Response::HTTP_NO_CONTENT);
     }
 }

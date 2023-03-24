@@ -30,7 +30,7 @@ class BookPolicy
      */
     public function view(User $user, Book $book)
     {
-        //
+        return $user->library_id === $book->library_id || $user->role === 'admin';
     }
 
     /**
@@ -41,7 +41,7 @@ class BookPolicy
      */
     public function create(User $user)
     {
-        //
+        return $user->role === 'librarian';
     }
 
     /**
@@ -53,7 +53,7 @@ class BookPolicy
      */
     public function update(User $user, Book $book)
     {
-        //
+        return $user->library_id === $book->library_id && $user->role === 'librarian';
     }
 
     /**
@@ -65,7 +65,7 @@ class BookPolicy
      */
     public function delete(User $user, Book $book)
     {
-        //
+        return $user->library_id === $book->library_id && $user->role === 'librarian';
     }
 
     /**

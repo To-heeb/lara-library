@@ -18,7 +18,7 @@ class PublisherPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return $user->role === 'admin';
     }
 
     /**
@@ -30,7 +30,7 @@ class PublisherPolicy
      */
     public function view(User $user, Publisher $publisher)
     {
-        //
+        return $user->library_id === $publisher->library_id || $user->role === 'admin';
     }
 
     /**
@@ -41,7 +41,7 @@ class PublisherPolicy
      */
     public function create(User $user)
     {
-        //
+        return $user->role === 'librarian';
     }
 
     /**
@@ -53,7 +53,7 @@ class PublisherPolicy
      */
     public function update(User $user, Publisher $publisher)
     {
-        //
+        return $user->library_id === $publisher->library_id && $user->role === 'librarian';
     }
 
     /**
@@ -65,7 +65,7 @@ class PublisherPolicy
      */
     public function delete(User $user, Publisher $publisher)
     {
-        //
+        return $user->library_id === $publisher->library_id && $user->role === 'librarian';
     }
 
     /**

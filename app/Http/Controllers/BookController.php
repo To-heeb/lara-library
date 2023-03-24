@@ -48,7 +48,8 @@ class BookController extends Controller
      */
     public function show($id, Book $book)
     {
-        //
+        $this->authorize('view', $book);
+
         return new BookResource($book);
     }
 
@@ -61,9 +62,7 @@ class BookController extends Controller
      */
     public function update(UpdateBookRequest $request, $id, Book $book)
     {
-        //
-        $result = $this->validateLibrary($book);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+        $this->authorize('update', $book);
 
         $book->update($request->validated());
 
@@ -78,9 +77,8 @@ class BookController extends Controller
      */
     public function destroy($id, Book $book)
     {
-        //
-        $result = $this->validateLibrary($book);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+        $this->authorize('delete', $book);
+
         $book->delete();
 
         return $this->success([], "Book successfully deleted", Response::HTTP_NO_CONTENT);

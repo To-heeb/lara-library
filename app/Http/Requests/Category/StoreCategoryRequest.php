@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Category;
 
+use App\Models\Category;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCategoryRequest extends FormRequest
@@ -13,7 +15,7 @@ class StoreCategoryRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Gate::allows('create', Category::class);
     }
 
     /**

@@ -42,8 +42,7 @@ class BookIssuePolicy
      */
     public function create(User $user)
     {
-        //
-
+        return $user->role === 'librarian' || $user->role === 'user';
     }
 
     /**

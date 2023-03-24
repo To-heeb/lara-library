@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Publisher;
 
+use App\Models\Publisher;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePublisherRequest extends FormRequest
@@ -13,7 +15,7 @@ class StorePublisherRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Gate::allows('create', Publisher::class);
     }
 
     /**

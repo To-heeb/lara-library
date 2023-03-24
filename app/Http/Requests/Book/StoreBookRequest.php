@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Book;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBookRequest extends FormRequest
@@ -13,7 +14,7 @@ class StoreBookRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Gate::allows('create', Book::class);
     }
 
     /**

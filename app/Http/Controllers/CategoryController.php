@@ -47,8 +47,7 @@ class CategoryController extends Controller
      */
     public function show($id, Category $category)
     {
-        $result = $this->validateLibrary($category);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+        $this->authorize('view', $category);
 
         return new CategoryResource($category);
     }
@@ -62,9 +61,7 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, $id, Category $category)
     {
-        //
-        $result = $this->validateLibrary($category);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+        $this->authorize('update', $category);
 
         $category->update($request->validated());
 
@@ -79,9 +76,7 @@ class CategoryController extends Controller
      */
     public function destroy($id, Category $category)
     {
-        //
-        $result = $this->validateLibrary($category);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+        $this->authorize('delete', $category);
 
         $category->delete();
 

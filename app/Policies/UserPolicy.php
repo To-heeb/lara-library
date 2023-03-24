@@ -17,7 +17,7 @@ class UserPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return $user->role === 'admin';
     }
 
     /**
@@ -29,7 +29,7 @@ class UserPolicy
      */
     public function view(User $user, User $model)
     {
-        //
+        return (auth()->check() && $model->id == auth()->id()) || ($user->library_id === $model->library_id && $user->role === 'librarian');
     }
 
     /**
@@ -40,7 +40,6 @@ class UserPolicy
      */
     public function create(User $user)
     {
-        //
     }
 
     /**
@@ -52,7 +51,7 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-        //
+        return (auth()->check() && $model->id == auth()->id());
     }
 
     /**
@@ -64,7 +63,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model)
     {
-        //
+        return (auth()->check() && $model->id == auth()->id()) || ($user->library_id === $model->library_id || $user->role === 'librarian') || $user->role === 'admin';
     }
 
     /**
