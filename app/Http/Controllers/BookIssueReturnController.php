@@ -13,7 +13,7 @@ use App\Http\Requests\BookIssue\ReturnBookIssueRequest;
 
 class BookIssueReturnController extends Controller
 {
-    use HttpResponses, ValidateLibrary;
+    use HttpResponses;
     /**
      * Handle the incoming request.
      *

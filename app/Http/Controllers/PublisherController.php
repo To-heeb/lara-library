@@ -13,7 +13,7 @@ use App\Http\Requests\Publisher\UpdatePublisherRequest;
 
 class PublisherController extends Controller
 {
-    use HttpResponses, ValidateLibrary;
+    use HttpResponses;
 
 
 

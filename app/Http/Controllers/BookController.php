@@ -13,7 +13,7 @@ use App\Http\Requests\Book\UpdateBookRequest;
 
 class BookController extends Controller
 {
-    use HttpResponses, ValidateLibrary;
+    use HttpResponses;
 
 
     /**

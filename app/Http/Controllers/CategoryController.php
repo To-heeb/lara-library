@@ -13,7 +13,7 @@ use App\Traits\ValidateLibrary;
 
 class CategoryController extends Controller
 {
-    use HttpResponses, ValidateLibrary;
+    use HttpResponses;
 
 
     /**

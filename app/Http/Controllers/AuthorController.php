@@ -15,7 +15,7 @@ use App\Http\Requests\Author\UpdateAuthorRequest;
 
 class AuthorController extends Controller
 {
-    use HttpResponses, ValidateLibrary;
+    use HttpResponses;
 
     /**
      * Display a listing of the resource.

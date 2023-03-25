@@ -18,7 +18,7 @@ use App\Http\Requests\User\UpdateUserRequest;
 class UserController extends Controller
 {
 
-    use HttpResponses, ValidateLibrary;
+    use HttpResponses;
     /**
      * Display a listing of the resource.
      *

@@ -18,7 +18,7 @@ use App\Traits\ValidateLibrary;
 
 class BookIssueController extends Controller
 {
-    use HttpResponses, ValidateLibrary;
+    use HttpResponses;
 
     /**
      * Display a listing of the resource.

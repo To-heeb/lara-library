@@ -13,7 +13,7 @@ use App\Http\Requests\BookIssue\ExtendBookIssueRequest;
 
 class BookIssueExtendController extends Controller
 {
-    use HttpResponses, ValidateLibrary;
+    use HttpResponses;
 
     /**
      * @param ExtendBookIssueRequest $request
