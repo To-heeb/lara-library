@@ -213,7 +213,7 @@ class LibrarianTest extends TestCase
         //dd($url);
         $this->actingAs($this->user, 'sanctum')
             ->json('put', $url, $payload, $this->header)
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+            ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     public function test_librarian_can_create_an_author()

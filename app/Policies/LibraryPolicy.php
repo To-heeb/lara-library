@@ -53,7 +53,7 @@ class LibraryPolicy
      */
     public function update(User $user, Library $library)
     {
-        //
+        return (auth()->check() && $user->id == auth()->id()) &&  ($user->library_id === $library->id && $user->role === 'librarian');
     }
 
     /**
@@ -65,7 +65,6 @@ class LibraryPolicy
      */
     public function delete(User $user, Library $library)
     {
-        //
     }
 
     /**

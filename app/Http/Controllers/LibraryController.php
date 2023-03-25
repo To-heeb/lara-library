@@ -23,7 +23,6 @@ class LibraryController extends Controller
      */
     public function index()
     {
-        //
         return LibraryResource::collection(Library::all());
     }
 
@@ -67,9 +66,7 @@ class LibraryController extends Controller
      */
     public function update(UpdateLibraryRequest $request, $id, Library $library)
     {
-        if (Auth::user()->library_id != $library->id) {
-            return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
-        }
+        $this->authorize('update', $library);
 
         $library->update($request->validated());
 
