@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
     public function run()
     {
         //
-        $type = ['admin', 'user', 'super_admin'];
+        $type = ['admin', 'user', 'librarian'];
 
         // User::create([
         //     'name' => "To-heeb",

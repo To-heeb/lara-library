@@ -122,10 +122,7 @@ class BookIssueController extends Controller
      */
     public function destroy($id, BookIssue $bookissue)
     {
-        //
-        //  dd([$bookissue->library_id, Auth::user()->library_id]);
-        $result = $this->validateLibrary($bookissue);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+        $this->authorize('destroy', $bookissue);
 
         $bookissue->delete();
 

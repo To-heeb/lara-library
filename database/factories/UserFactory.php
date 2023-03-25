@@ -39,7 +39,7 @@ class UserFactory extends Factory
     private function role()
     {
         $index = rand(0, 2);
-        $type = ['admin', 'user', 'super_admin'];
+        $type = ['admin', 'user', 'librarian'];
         return $type[$index];
     }
 }
