@@ -6,7 +6,6 @@ use App\Models\Author;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Response;
-use App\Traits\ValidateLibrary;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\AuthorResource;
 use App\Http\Requests\Author\StoreAuthor;

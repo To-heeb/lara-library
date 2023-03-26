@@ -9,7 +9,6 @@ use Illuminate\Http\Response;
 use App\Http\Resources\CategoryResource;
 use App\Http\Requests\Category\StoreCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
-use App\Traits\ValidateLibrary;
 
 class CategoryController extends Controller
 {

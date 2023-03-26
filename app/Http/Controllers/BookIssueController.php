@@ -14,7 +14,6 @@ use App\Http\Requests\BookIssue\StoreBookIssueRequest;
 use App\Http\Requests\BookIssue\ExtendBookIssueRequest;
 use App\Http\Requests\BookIssue\ReturnBookIssueRequest;
 use App\Http\Requests\BookIssue\UpdateBookIssueRequest;
-use App\Traits\ValidateLibrary;
 
 class BookIssueController extends Controller
 {

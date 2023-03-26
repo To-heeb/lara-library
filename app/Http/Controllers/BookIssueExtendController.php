@@ -6,8 +6,6 @@ use App\Models\Book;
 use App\Models\Library;
 use App\Models\BookIssue;
 use App\Traits\HttpResponses;
-use Illuminate\Http\Response;
-use App\Traits\ValidateLibrary;
 use App\Http\Resources\BookIssueResource;
 use App\Http\Requests\BookIssue\ExtendBookIssueRequest;
 

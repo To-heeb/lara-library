@@ -6,7 +6,6 @@ use App\Models\Book;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Response;
-use App\Traits\ValidateLibrary;
 use App\Http\Resources\BookResource;
 use App\Http\Requests\Book\StoreBookRequest;
 use App\Http\Requests\Book\UpdateBookRequest;

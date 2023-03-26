@@ -4,10 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\BookIssue;
-use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
-use Illuminate\Http\Response;
-use App\Traits\ValidateLibrary;
 use App\Http\Resources\BookIssueResource;
 use App\Http\Requests\BookIssue\ReturnBookIssueRequest;
 

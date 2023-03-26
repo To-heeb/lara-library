@@ -3,16 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Response;
-use App\Traits\ValidateLibrary;
 use App\Http\Resources\UserResource;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\User\LoginUser;
-use App\Http\Requests\User\StoreUser;
-use App\Http\Requests\User\AuthenticateUser;
 use App\Http\Requests\User\UpdateUserRequest;
 
 class UserController extends Controller

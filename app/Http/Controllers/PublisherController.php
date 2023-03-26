@@ -6,7 +6,6 @@ use App\Models\Publisher;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Response;
-use App\Traits\ValidateLibrary;
 use App\Http\Resources\PublisherResource;
 use App\Http\Requests\Publisher\StorePublisherRequest;
 use App\Http\Requests\Publisher\UpdatePublisherRequest;
