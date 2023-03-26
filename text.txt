@@ -54,3 +54,6 @@ book_issues (created)
 -extention_num
 -status
 
+
+updates
+move logic from controller for book issue extend and others to action

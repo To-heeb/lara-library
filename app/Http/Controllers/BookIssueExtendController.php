@@ -13,7 +13,7 @@ use App\Http\Requests\BookIssue\ExtendBookIssueRequest;
 
 class BookIssueExtendController extends Controller
 {
-    use HttpResponses, ValidateLibrary;
+    use HttpResponses;
 
     /**
      * @param ExtendBookIssueRequest $request
@@ -25,9 +25,7 @@ class BookIssueExtendController extends Controller
      */
     public function update(ExtendBookIssueRequest $request, $id, BookIssue $bookissue)
     {
-        $result = $this->validateLibrary($bookissue);
-        //dd("I got here");
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+        $this->authorize('update', $bookissue);
 
         $book_issue_info = $request->validated();
 

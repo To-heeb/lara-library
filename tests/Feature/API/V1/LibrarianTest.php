@@ -1432,7 +1432,7 @@ class LibrarianTest extends TestCase
 
         $this->actingAs($this->user, 'sanctum')
             ->json('put', $url, $payload, $this->header)
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+            ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     public function test_librarian_can_return_a_bookissue()

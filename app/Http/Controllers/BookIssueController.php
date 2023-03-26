@@ -75,15 +75,7 @@ class BookIssueController extends Controller
      */
     public function show($id, BookIssue $bookissue)
     {
-        //
-        $result = $this->validateLibrary($bookissue);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
-
-        if (Auth::user()->role == "user") {
-            if (Auth::user()->id != $bookissue->user_id) {
-                return $this->error('', "You are not authorized to make this request", 403);
-            }
-        }
+        $this->authorize('view', $bookissue);
 
         return new BookIssueResource($bookissue);
     }
@@ -98,15 +90,7 @@ class BookIssueController extends Controller
      */
     public function update(UpdateBookIssueRequest $request, $id, BookIssue $bookissue)
     {
-        //
-        $result = $this->validateLibrary($bookissue);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
-
-        if (Auth::user()->role == "user") {
-            if (Auth::user()->id != $bookissue->user_id) {
-                return $this->error('', "You are not authorized to make this request", Response::HTTP_FORBIDDEN);
-            }
-        }
+        $this->authorize('update', $bookissue);
 
         $bookissue->update($request->validated());
 
@@ -122,7 +106,7 @@ class BookIssueController extends Controller
      */
     public function destroy($id, BookIssue $bookissue)
     {
-        $this->authorize('destroy', $bookissue);
+        $this->authorize('delete', $bookissue);
 
         $bookissue->delete();
 

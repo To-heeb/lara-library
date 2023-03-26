@@ -22,9 +22,7 @@ class BookIssueReturnController extends Controller
      */
     public function update(ReturnBookIssueRequest $request, $id, BookIssue $bookissue)
     {
-        //
-        $result = $this->validateLibrary($bookissue);
-        if (!$result) return $this->error('', "You are not authorized to make this request", Response::HTTP_UNAUTHORIZED);
+        $this->authorize('update', $bookissue);
 
         $book_issue_info = $request->validated($request->all());
         $pending_book = $this->validateBook($book_issue_info);
