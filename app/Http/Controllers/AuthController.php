@@ -99,6 +99,7 @@ class AuthController extends Controller
     }
 
     // REGISTRATION
+
     // user_regsiter 
     public function user_register(StoreUserRequest  $request)
     {

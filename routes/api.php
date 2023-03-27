@@ -33,22 +33,29 @@ use App\Http\Controllers\Admin\PublisherController as AdminPublisherController;
 */
 
 
-Route::group(['prefix' => 'v1'], function () {
+Route::group([
+    'prefix' => 'v1',
+    'as' => 'api.'
+], function () {
 
     // librarian
     Route::group(['prefix' => 'librarian'], function () {
-        Route::post('/register', [AuthController::class, 'librarian_register']);
+        Route::post('/register', [AuthController::class, 'librarian_register'])->name('librarian.register');
         Route::post('/libraries', [LibraryController::class, 'store']);
     });
 
     // admin
     Route::group(['prefix' => 'admin'], function () {
-        Route::post('/login', [AuthController::class, 'admin_login']);
-        Route::post('/register', [AuthController::class, 'admin_register']);
+        Route::post('/login', [AuthController::class, 'admin_login'])->name('admin.login');
+        Route::post('/register', [AuthController::class, 'admin_register'])->name('admin.register');;
     });
 
 
-    Route::group(['prefix' => 'admin', 'middleware' =>  ['auth:sanctum', 'role:admin']], function () {
+    Route::group([
+        'prefix' => 'admin',
+        'middleware' =>  ['auth:sanctum', 'role:admin'],
+        'as' => 'admin.',
+    ], function () {
 
         // admin
         Route::resource('/authors', AdminAuthorController::class)->only(['index', 'show']);
@@ -66,17 +73,20 @@ Route::group(['prefix' => 'v1'], function () {
 
 Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
 
-    Route::group(['prefix' => 'v1'], function () {
+    Route::group([
+        'prefix' => 'v1',
+        'as' => 'api.'
+    ], function () {
 
         // librarian
         Route::group(['prefix' => 'librarian'], function () {
-            Route::post('/login', [AuthController::class, 'librarian_login']);
+            Route::post('/login', [AuthController::class, 'librarian_login'])->name('librarian.login');
         });
 
         // user
-        Route::group(['prefix' => 'user'], function () {
-            Route::post('/login', [AuthController::class, 'user_login']);
-            Route::post('/register', [AuthController::class, 'user_register']);
+        Route::group(['prefix' => 'user', 'as' => 'user.'], function () {
+            Route::post('/login', [AuthController::class, 'user_login'])->name('login');
+            Route::post('/register', [AuthController::class, 'user_register'])->name('register');
         });
 
         Route::group(['middleware' => ['auth:sanctum', 'validate_library']], function () {
@@ -85,25 +95,29 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
             Route::group(
                 [
                     'prefix' => 'user',
-                    'middleware' => 'role:user'
+                    'middleware' => 'role:user',
+                    'as' => 'user.',
                 ],
                 function () {
                     Route::apiResource('/authors', AuthorController::class)->only(['index', 'show']);
                     Route::apiResource('/books', BookController::class)->only(['index', 'show']);
                     Route::apiResource('/publishers', PublisherController::class)->only(['index', 'show']);
                     Route::apiResource('/categories', CategoryController::class)->only(['index', 'show']);
-                    Route::get('/libraries/{library}', [LibraryController::class, 'show']);
+                    Route::get('/libraries/{library}', [LibraryController::class, 'show'])->name('libraries.show');
                     Route::apiResource('/bookissues', BookIssueController::class)->only(['store', 'show']);
-                    Route::put('/bookissues/{bookissue}/extend', [BookIssueExtendController::class, 'update']);
-                    Route::put('/bookissues/{bookissue}/return', [BookIssueReturnController::class, 'update']);
-                    Route::resource('/users', UserController::class)->only(['show', 'update', 'destroy']);
+                    Route::apiResource('/users', UserController::class)->only(['show', 'update', 'destroy']);
+                    Route::name('bookissues.')->group(function () {
+                        Route::put('/bookissues/{bookissue}/extend', [BookIssueExtendController::class, 'update'])->name('extend');
+                        Route::put('/bookissues/{bookissue}/return', [BookIssueReturnController::class, 'update'])->name('return');
+                    });
                 }
             );
 
             // librarian
             Route::group([
                 'prefix' => 'librarian',
-                'middleware' => 'role:librarian'
+                'middleware' => 'role:librarian',
+                'as' => 'librarian.',
             ], function () {
 
                 Route::apiResources([
@@ -115,14 +129,16 @@ Route::domain('{subdomain}.' . config('app.short_url'))->group(function () {
                     'bookissues' => BookIssueController::class,
                 ]);
 
-                Route::put('/bookissues/{bookissue}/extend', [BookIssueExtendController::class, 'update']);
-                Route::put('/bookissues/{bookissue}/return', [BookIssueReturnController::class, 'update']);
+                Route::name('bookissues.')->group(function () {
+                    Route::put('/bookissues/{bookissue}/extend', [BookIssueExtendController::class, 'update'])->name('extend');
+                    Route::put('/bookissues/{bookissue}/return', [BookIssueReturnController::class, 'update'])->name('return');
+                });
                 Route::resource('/users', UserController::class)->only(['index', 'update', 'show']);
                 //Route::delete('/users/{user}', [UserController::class, 'destroy']);
             });
 
             // logout
-            Route::post('/logout', [AuthController::class, 'logout']);
+            Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         });
     });
 });

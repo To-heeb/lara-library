@@ -8,6 +8,7 @@ use Tests\TestCase;
 
 class UserTest extends TestCase
 {
+    use WithFaker, RefreshDatabase;
     /**
      * A basic feature test example.
      *

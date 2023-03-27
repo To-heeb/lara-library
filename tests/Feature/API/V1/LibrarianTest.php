@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\API\V1;
+namespace Tests\Feature\Api\V1;
 
 use Tests\TestCase;
 use App\Models\Book;
@@ -34,7 +34,6 @@ class LibrarianTest extends TestCase
     {
         parent::setUp();
 
-        //"http://lekki". config('app.short_url');
         $this->base_url = "http://lekki.lara-library.test";
         $this->library = Library::factory()->create(['subdomain' => 'lekki', 'book_issue_duration_in_days' => 5]);
         $this->header = array('Content-Type' => 'application/vnd.api+json', "Accept" => 'application/vnd.api+json');
