@@ -290,42 +290,39 @@ class LibrarianTest extends TestCase
 
     public function test_librarian_can_fetch_all_author_in_it_library()
     {
-
-
         $author = Author::factory(5)->create(['library_id' => $this->library->id]);
 
         $url =  $this->base_url . "/api/v1/librarian/authors";
 
         $response = $this->actingAs($this->user, 'sanctum')
             ->json('get', $url, [], $this->header)
-            ->assertStatus(Response::HTTP_OK);
-        // dd($response);
-        $response->assertJsonStructure(
-            [
-                "data" => [
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
 
-                    [
-                        'id',
-                        "attributes" => [
-                            'name',
-                            'created_at',
-                            'updated_at',
-                        ],
-                        'relationships' => [
-                            'library_id',
-                            'library_name',
-                            'library_address',
-                            'library_email',
-                            'library_phone_number',
-                            'book_issue_duration_in_days',
-                            'max_issue_extentions',
+                        [
+                            'id',
+                            "attributes" => [
+                                'name',
+                                'created_at',
+                                'updated_at',
+                            ],
+                            'relationships' => [
+                                'library_id',
+                                'library_name',
+                                'library_address',
+                                'library_email',
+                                'library_phone_number',
+                                'book_issue_duration_in_days',
+                                'max_issue_extentions',
+                            ]
                         ]
                     ]
+
                 ]
 
-            ]
-
-        );
+            );
     }
 
     public function test_librarian_can_not_fetch_an_author_not_in_it_library()
@@ -334,7 +331,6 @@ class LibrarianTest extends TestCase
         $new_library = Library::factory()->create(['subdomain' => 'ikeja']);
         $library_id = $new_library->id;
 
-        //dd([$user->library_id, $library_id]);
         $author = Author::factory()->create(['library_id' => $library_id]);
         $author_id = $author->id;
         $url =  $this->base_url . "/api/v1/librarian/authors/$author_id";

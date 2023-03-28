@@ -24,11 +24,13 @@ class AdminTest extends TestCase
     {
         parent::setUp();
 
-        // $user = User::factory()->create([
-        //     'role' => 'admin',
-        //     'password' => Hash::make("00000000"),
-        // ]);
+        $user = User::factory()->create([
+            'email' => "example@example.com",
+            'role' => 'admin',
+            'password' => Hash::make("00000000"),
+        ]);
 
+        $this->user = $user;
         // Sanctum::actingAs($user, []);
     }
 
@@ -59,5 +61,93 @@ class AdminTest extends TestCase
             );
 
         $this->assertDatabaseHas(User::class, ['last_name' => $data['last_name']]);
+    }
+
+    /**
+     * 
+     * @test
+     */
+    public function it_can_login_successfully()
+    {
+        $data = [
+            'email' => $this->user->email,
+            'password' => "00000000",
+        ];
+
+        $this->postJson(route('api.admin.login'), $data)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "status",
+                    "message",
+                    "data" => [
+                        "user" =>  [
+                            "id",
+                            "library_id",
+                            "name",
+                            "first_name",
+                            "last_name",
+                            "role",
+                            "phone_number",
+                            "email",
+                            "email_verified_at",
+                            "created_at",
+                            "updated_at",
+                        ],
+                        "token"
+                    ]
+                ]
+            );
+    }
+
+    /**
+     * @test
+     */
+    public function it_cannot_login_successfully_with_incorrect_creds()
+    {
+        $data = [
+            'email' => $this->user->email,
+            'password' => "12345678",
+        ];
+
+        $this->postJson(route('api.admin.login'), $data)
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_fetch_all_admins()
+    {
+        $author = Author::factory(5)->create(['library_id' => $this->library->id]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->postJson(route('api.admin.authors.index'))
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        [
+                            'id',
+                            "attributes" => [
+                                'name',
+                                'created_at',
+                                'updated_at',
+                            ],
+                            'relationships' => [
+                                'library_id',
+                                'library_name',
+                                'library_address',
+                                'library_email',
+                                'library_phone_number',
+                                'book_issue_duration_in_days',
+                                'max_issue_extentions',
+                            ]
+                        ]
+                    ]
+
+                ]
+
+            );
     }
 }
