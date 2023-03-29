@@ -4,12 +4,13 @@ namespace Tests\Feature\Api\V1;
 
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Author;
 use App\Models\Library;
+use Laravel\Sanctum\Sanctum;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
 
 class AdminTest extends TestCase
 {
@@ -23,7 +24,7 @@ class AdminTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-
+        $this->library = Library::factory()->create(['subdomain' => 'lekki', 'book_issue_duration_in_days' => 5]);
         $user = User::factory()->create([
             'email' => "example@example.com",
             'role' => 'admin',
@@ -117,12 +118,47 @@ class AdminTest extends TestCase
     /**
      * @test
      */
-    public function it_can_fetch_all_admins()
+    public function it_can_fetch_an_author()
+    {
+        $author = Author::factory()->create(['library_id' => $this->library->id]);
+        $author_id = $author->id;
+
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson(route('api.admin.authors.show', array('author' => $author_id)))
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            'name',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                        ]
+                    ]
+                ]
+
+            );
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_fetch_all_authors()
     {
         $author = Author::factory(5)->create(['library_id' => $this->library->id]);
 
         $this->actingAs($this->user, 'sanctum')
-            ->postJson(route('api.admin.authors.index'))
+            ->getJson(route('api.admin.authors.index'))
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(
                 [
