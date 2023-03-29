@@ -65,7 +65,7 @@ Route::group([
         Route::resource('/libraries', AdminLibraryController::class)->only(['index', 'show']);
         Route::resource('/bookissues', AdminBookIssueController::class)->only(['index', 'show']);
         Route::resource('/users', AdminController::class)->only(['index', 'show', 'update']);
-        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         //Route::delete('/users/{user}', [UserController::class, 'destroy']);
     });
 });
