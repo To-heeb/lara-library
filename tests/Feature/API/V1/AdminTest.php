@@ -3,9 +3,12 @@
 namespace Tests\Feature\Api\V1;
 
 use Tests\TestCase;
+use App\Models\Book;
 use App\Models\User;
 use App\Models\Author;
 use App\Models\Library;
+use App\Models\Category;
+use App\Models\Publisher;
 use Laravel\Sanctum\Sanctum;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -178,6 +181,127 @@ class AdminTest extends TestCase
                                 'library_phone_number',
                                 'book_issue_duration_in_days',
                                 'max_issue_extentions',
+                            ]
+                        ]
+                    ]
+
+                ]
+
+            );
+    }
+
+
+    /**
+     * @test
+     */
+    public function it_can_fetch_a_book()
+    {
+
+        $library_id = $this->library->id;
+
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
+
+        $book = Book::factory()->create([
+            'library_id' => $this->library->id,
+            "publisher_id" => $publisher->id,
+            "category_id" => $category->id,
+            "author_id" => $author->id,
+        ]);
+
+        $book_id = $book->id;
+
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson(route('api.admin.books.show', array('book' => $book_id)))
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            "name",
+                            "published_year",
+                            "total_copies",
+                            "available_copies",
+                            "isbn",
+                            "edition",
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                            "author_id",
+                            "author_name",
+                            "publisher_id",
+                            "publisher_name",
+                            "category_id",
+                            "category_name"
+                        ]
+                    ]
+                ]
+
+            );
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_fetch_all_book()
+    {
+        $library_id = $this->library->id;
+
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
+
+        $book = Book::factory(5)->create(
+            [
+                'library_id' => $this->library->id,
+                "publisher_id" => $publisher->id,
+                "category_id" => $category->id,
+                "author_id" => $author->id,
+            ]
+        );
+
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson(route('api.admin.books.index'))
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        [
+                            'id',
+                            "attributes" => [
+                                "name",
+                                "published_year",
+                                "total_copies",
+                                "available_copies",
+                                "isbn",
+                                "edition",
+                                'created_at',
+                                'updated_at',
+                            ],
+                            'relationships' => [
+                                'library_id',
+                                'library_name',
+                                'library_address',
+                                'library_email',
+                                'library_phone_number',
+                                'book_issue_duration_in_days',
+                                'max_issue_extentions',
+                                "author_id",
+                                "author_name",
+                                "publisher_id",
+                                "publisher_name",
+                                "category_id",
+                                "category_name"
                             ]
                         ]
                     ]
