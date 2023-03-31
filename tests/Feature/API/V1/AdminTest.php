@@ -19,9 +19,8 @@ class AdminTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
-    private $base_url;
+
     private $library;
-    private $header;
     private $user;
 
     public function setUp(): void
