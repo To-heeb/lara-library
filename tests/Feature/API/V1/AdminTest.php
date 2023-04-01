@@ -252,7 +252,7 @@ class AdminTest extends TestCase
     /**
      * @test
      */
-    public function it_can_fetch_all_book()
+    public function it_can_fetch_all_books()
     {
         $library_id = $this->library->id;
 
@@ -301,6 +301,216 @@ class AdminTest extends TestCase
                                 "publisher_name",
                                 "category_id",
                                 "category_name"
+                            ]
+                        ]
+                    ]
+
+                ]
+
+            );
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_fetch_a_publisher()
+    {
+        $publisher = Publisher::factory()->create(['library_id' => $this->library->id]);
+        $publisher_id = $publisher->id;
+
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson(route('api.admin.publishers.show', array('publisher' => $publisher_id)))
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            'name',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                        ]
+                    ]
+                ]
+
+            );
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_fetch_all_publishers()
+    {
+        $author = Publisher::factory(5)->create(['library_id' => $this->library->id]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson(route('api.admin.publishers.index'))
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        [
+                            'id',
+                            "attributes" => [
+                                'name',
+                                'created_at',
+                                'updated_at',
+                            ],
+                            'relationships' => [
+                                'library_id',
+                                'library_name',
+                                'library_address',
+                                'library_email',
+                                'library_phone_number',
+                                'book_issue_duration_in_days',
+                                'max_issue_extentions',
+                            ]
+                        ]
+                    ]
+
+                ]
+
+            );
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_fetch_a_category()
+    {
+        $category = Category::factory()->create(['library_id' => $this->library->id]);
+        $category_id = $category->id;
+
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson(route('api.admin.categories.show', array('category' => $category_id)))
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            'name',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                        ]
+                    ]
+                ]
+
+            );
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_fetch_all_categories()
+    {
+        $category = Category::factory(5)->create(['library_id' => $this->library->id]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson(route('api.admin.categories.index'))
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        [
+                            'id',
+                            "attributes" => [
+                                'name',
+                                'created_at',
+                                'updated_at',
+                            ],
+                            'relationships' => [
+                                'library_id',
+                                'library_name',
+                                'library_address',
+                                'library_email',
+                                'library_phone_number',
+                                'book_issue_duration_in_days',
+                                'max_issue_extentions',
+                            ]
+                        ]
+                    ]
+
+                ]
+
+            );
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_fetch_a_library()
+    {
+        $library = Library::factory()->create();
+        $library_id = $library->id;
+
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson(route('api.admin.libraries.show', array('library' => $library_id)))
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        "id",
+                        "attributes" => [
+                            "name",
+                            "subdomain",
+                            "address",
+                            "email",
+                            "phone_number",
+                            "book_issue_duration_in_days",
+                            "max_issue_extentions",
+                            "created_at",
+                            "updated_at",
+                        ]
+                    ]
+                ]
+
+            );
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_fetch_all_libraries()
+    {
+        $category = Library::factory(5)->create();
+
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson(route('api.admin.libraries.index'))
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        [
+                            "id",
+                            "attributes" => [
+                                "name",
+                                "subdomain",
+                                "address",
+                                "email",
+                                "phone_number",
+                                "book_issue_duration_in_days",
+                                "max_issue_extentions",
+                                "created_at",
+                                "updated_at",
                             ]
                         ]
                     ]
