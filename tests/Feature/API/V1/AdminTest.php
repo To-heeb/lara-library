@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Author;
 use App\Models\Library;
 use App\Models\Category;
+use App\Models\BookIssue;
 use App\Models\Publisher;
 use Laravel\Sanctum\Sanctum;
 use Illuminate\Http\Response;
@@ -511,6 +512,138 @@ class AdminTest extends TestCase
                                 "max_issue_extentions",
                                 "created_at",
                                 "updated_at",
+                            ]
+                        ]
+                    ]
+
+                ]
+
+            );
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_fetch_a_bookissue()
+    {
+        $library_id = $this->library->id;
+
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
+
+        $bookissue = BookIssue::factory()->create([
+            'library_id' => $library_id,
+            "publisher_id" => $publisher->id,
+            "category_id" => $category->id,
+            "author_id" => $author->id,
+            "available_copies" => 10,
+            "total_copies" => 10,
+            "isbn" => $this->faker->phoneNumber,
+            "published_year" => $this->faker->year,
+            "edition" => '2nd',
+        ]);
+        $bookissue_id = $bookissue->id;
+
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson(route('api.admin.bookissues.show', array('bookissue' => $bookissue_id)))
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        'id',
+                        "attributes" => [
+                            'issue_date',
+                            'return_date',
+                            'due_date',
+                            'status',
+                            'extention_num',
+                            'created_at',
+                            'updated_at',
+                        ],
+                        'relationships' => [
+                            'library_id',
+                            'library_name',
+                            'library_address',
+                            'library_email',
+                            'library_phone_number',
+                            'book_issue_duration_in_days',
+                            'max_issue_extentions',
+                            'book_id',
+                            'book_name',
+                            'book_author',
+                            'book_category',
+                            'book_publisher',
+                            'total_copies',
+                            'available_copies',
+                            'published_year',
+                            'isbn',
+                            'edition',
+                        ]
+                    ]
+                ]
+
+            );
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_fetch_all_bookissues()
+    {
+        $library_id = $this->library->id;
+
+        $publisher = Publisher::factory()->create(['library_id' => $library_id]);
+        $category = Category::factory()->create(['library_id' => $library_id]);
+        $author = Author::factory()->create(['library_id' => $library_id]);
+
+        $category = BookIssue::factory(5)->create([
+            'library_id' => $library_id,
+            "publisher_id" => $publisher->id,
+            "category_id" => $category->id,
+            "author_id" => $author->id,
+            "available_copies" => 10,
+            "total_copies" => 10,
+            "isbn" => $this->faker->phoneNumber,
+            "published_year" => $this->faker->year,
+            "edition" => '2nd',
+        ]);
+
+        $this->actingAs($this->user, 'sanctum')
+            ->getJson(route('api.admin.bookissue.index'))
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(
+                [
+                    "data" => [
+                        [
+                            'id',
+                            "attributes" => [
+                                'issue_date',
+                                'return_date',
+                                'due_date',
+                                'status',
+                                'extention_num',
+                                'created_at',
+                                'updated_at',
+                            ],
+                            'relationships' => [
+                                'library_id',
+                                'library_name',
+                                'library_address',
+                                'library_email',
+                                'library_phone_number',
+                                'book_issue_duration_in_days',
+                                'max_issue_extentions',
+                                'book_id',
+                                'book_name',
+                                'book_author',
+                                'book_category',
+                                'book_publisher',
+                                'total_copies',
+                                'available_copies',
+                                'published_year',
+                                'isbn',
+                                'edition',
                             ]
                         ]
                     ]
